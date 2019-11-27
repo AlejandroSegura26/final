@@ -284,6 +284,7 @@
                     return;
                 }
                 let me = this;
+                
                 //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/actualizar' para llamar al controlador y ejecutar la tarea correspondiente
                 axios.put('/usuario/actualizar',{
                     //Se le asignan los valores recopilados de los inputs del modal

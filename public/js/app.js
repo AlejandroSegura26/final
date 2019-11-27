@@ -1997,23 +1997,70 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   //Propiedad 'data' de javascript donde se declaran las variables necesarias para el funcionamiento del modulo 'categorias', dentro de estas variables tenemos las encargadas de la paginacion, del crud, de la busqueda de registros y del activado y desactivado de la cliente
   data: function data() {
     return {
-      usuario_id: 0,
-      nombre: '',
-      correo_electronico: '',
-      usuario: '',
-      password: '',
-      rol_id: 0,
-      arrayUsuario: [],
+      id: 0,
+      nombre_mp: '',
+      //    imagen:'',
+      //   imagenMiniatura:'',
+      cantidad_minretiro: 0,
+      cantidad_maxretiro: 0,
+      cargo_retiro: 0,
+      porcentaje_cargo: 0,
+      taza_mp: 0,
+      moneda_mp: '',
+      dias_habiles: 0,
+      arrayMetodo: [],
       arrayRol: [],
       modal: 0,
       tituloModal: '',
       tipoAccion: 0,
-      errorUsuario: 0,
-      errorMostrarMsjUsuario: [],
+      errorMetodo: 0,
+      errorMostrarMsjMetodo: [],
       pagination: {
         'total': 0,
         'current_page': 0,
@@ -2029,6 +2076,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   //Métodos computados para realizar la paginacion, el metodo isActived -> devuelve la página actual, el metodo pagesNumber -> devuelve un arreglo con las diferentes paginas de acuerdo a cuantos registros se desean mostrar
   computed: {
+    /*    imagenm: function(){
+            return this.imagenMiniatura;
+        },*/
     isActived: function isActived() {
       return this.pagination.current_page;
     },
@@ -2065,32 +2115,34 @@ __webpack_require__.r(__webpack_exports__);
   },
   //Métodos para mostrar, guardar, actualizar, desactivar y activar el usuario
   methods: {
+    /* obtenerImagen(e)
+     {
+         let file= e.target.files[0];
+         console.log(file);
+         this.imagen=file;
+          this.cargarImagen(file);
+     },
+     cargarImagen(file)
+     {
+         let reader= new FileReader();
+         reader.onload= (e)=>
+         {
+             this.imagenMiniatura=e.target.result;
+         }
+         reader.readAsDataURL(file);
+     },*/
     //Metodo para obtener todos los registros de la bd mediante el uso del controlador definido y en este caso, se tiene tambien la implementacion de la paginacion para ver los registros de acuerdo a lo establecido en el modelo (10 modelos por pagina) y se implementa la busqueda de registros en este metodo debido a que es el que se encarga de mostrar los datos de acuerdo al criterio elegido si es que se ha introducido un texto o mostrar todos los datos en caso de que no sea asi
-    listarUsuario: function listarUsuario(page, buscar, criterio) {
+    listarMetodo: function listarMetodo(page, buscar, criterio) {
       var me = this; //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
 
-      var url = '/usuario?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
+      var url = '/metodoPago?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
       axios.get(url).then(function (response) {
         //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
         var respuesta = response.data; //Guarda los datos en el arreglo 'arrayUsuario'
 
-        me.arrayUsuario = respuesta.usuarios.data; //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
+        me.arrayMetodo = respuesta.metodo.data; //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
 
         me.pagination = respuesta.pagination;
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    //Método para llenar un select con los datos de la tabla rol, mostrando solo aquellos que estan activados
-    selectRol: function selectRol() {
-      var me = this; //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
-
-      var url = '/rol/selectRol';
-      axios.get(url).then(function (response) {
-        //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
-        var respuesta = response.data; //Guarda los datos en el arreglo 'arrayRol'
-
-        me.arrayRol = respuesta.roles;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2101,121 +2153,146 @@ __webpack_require__.r(__webpack_exports__);
 
       me.pagination.current_page = page; //Envia la peticion para visualizar los datos de esa pagina
 
-      me.listarUsuario(page, buscar, criterio);
+      me.listarMetodo(page, buscar, criterio);
     },
     //Método para registrar una categoria a la base de datos
-    registrarUsuario: function registrarUsuario() {
+    registrarMetodo: function registrarMetodo() {
       //Verifica que el método 'verificarCategoria' haya devuelto un valor, en ese caso, no se realiza ninguna tarea hasta que esto no sea cierto
-      if (this.validarUsuario()) {
+      if (this.validarMetodo()) {
         return;
       }
 
       var me = this; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/registrar' para llamar al controlador y ejecutar la tarea correspondiente
 
-      axios.post('/usuario/registrar', {
+      axios.post('/metodoPago/registrar', {
         //Se le asignan los valores recopilados de los inputs del modal
-        'nombre': this.nombre,
-        'correo_electronico': this.correo_electronico,
-        'usuario': this.usuario,
-        'password': this.password,
-        'rol_id': this.rol_id
+        //  'imagen_mp': this.imagen_mp,
+        'nombre_mp': this.nombre_mp,
+        'cantidad_minretiro': this.cantidad_minretiro,
+        'cantidad_maxretiro': this.cantidad_maxretiro,
+        'cargo_retiro': this.cargo_retiro,
+        'porcentaje_cargo': this.porcentaje_cargo,
+        'taza_mp': this.taza_mp,
+        'moneda_mp': this.moneda_mp,
+        'dias_habiles': this.dias_habiles // 'imagen': this.imagen
+
       }).then(function (response) {
         //Se llama al metodo 'cerrarModal' para ocultarlo y se vuelve a enlistar las categorias de forma descendente, es decir, el registro recien ingresado sera el primero
         me.cerrarModal();
-        me.listarUsuario(1, '', 'nombre');
+        me.listarMetodo(1, '', 'nombre_mp');
       })["catch"](function (error) {
         console.log(error);
       });
     },
     //Método para actualizar un registro de la tabla 'persona'
-    actualizarUsuario: function actualizarUsuario() {
+    actualizarMetodo: function actualizarMetodo() {
       //Verifica que el método 'verificarCategoria' haya devuelto un valor, en ese caso, se muestran los errores al usuario que son arrojados debido a que algun campo obligatorio esta vacio
-      if (this.validarUsuario()) {
+      if (this.validarMetodo()) {
         return;
       }
 
-      var me = this; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/actualizar' para llamar al controlador y ejecutar la tarea correspondiente
+      var me = this;
+      console.log(this.id); //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/actualizar' para llamar al controlador y ejecutar la tarea correspondiente
 
-      axios.put('/usuario/actualizar', {
+      axios.put('/metodoPago/actualizar', {
         //Se le asignan los valores recopilados de los inputs del modal
-        'nombre': this.nombre,
-        'correo_electronico': this.correo_electronico,
-        'usuario': this.usuario,
-        'password': this.password,
-        'rol_id': this.rol_id,
-        'id': this.usuario_id
+        'nombre_mp': this.nombre_mp,
+        'cantidad_minretiro': this.cantidad_minretiro,
+        'cantidad_maxretiro': this.cantidad_maxretiro,
+        'cargo_retiro': this.cargo_retiro,
+        'porcentaje_cargo': this.porcentaje_cargo,
+        'taza_mp': this.taza_mp,
+        'moneda_mp': this.moneda_mp,
+        'dias_habiles': this.dias_habiles,
+        'id': this.id // 'imagen': this.imagen
+
       }).then(function (response) {
         //Se llama al metodo 'cerrarModal' para ocultarlo y se vuelve a enlistar las categorias de forma descendente, es decir, el registro recien ingresado sera el primero
         me.cerrarModal();
-        me.listarUsuario(1, '', 'nombre');
+        me.listarMetodo(1, '', 'nombre_mp');
       })["catch"](function (error) {
         console.log(error);
       });
     },
     //Método que sirve para mostrar en el modal errores cuando el usuario no ingresa texto en el input mediante el uso de un array del apartado de estilos
-    validarUsuario: function validarUsuario() {
-      this.errorUsuario = 0;
-      this.errorMostrarMsjUsuario = [];
-      if (!this.nombre) this.errorMostrarMsjUsuario.push("El nombre del usuario no puede estar vacío.");
-      if (!this.usuario) this.errorMostrarMsjUsuario.push("El usuario no puede estar vacío.");
-      if (!this.password) this.errorMostrarMsjUsuario.push("La contraseña no puede estar vacía.");
-      if (this.rol_id == 0) this.errorMostrarMsjUsuario.push("Seleccione un rol para el usuario.");
-      if (this.errorMostrarMsjUsuario.length) this.errorUsuario = 1;
-      return this.errorUsuario;
+    validarMetodo: function validarMetodo() {
+      this.errorMetodo = 0;
+      this.errorMostrarMsjMetodo = [];
+      if (!this.nombre_mp) this.errorMostrarMsjMetodo.push("El nombre del metodo de pago no puede estar vacío.");
+      if (!this.cantidad_minretiro) this.errorMostrarMsjMetodo.push("La cantidad minima de retiro no puede estar vacía.");
+      if (!this.cantidad_maxretiro) this.errorMostrarMsjMetodo.push("La cantidad maxima de retiro no puede estar vacía.");
+      if (!this.cargo_retiro) this.errorMostrarMsjMetodo.push("El cargo de retiro no puede estar vacío.");
+      if (!this.porcentaje_cargo) this.errorMostrarMsjMetodo.push("El porcentaje de retiro no puede estar vacío.");
+      if (!this.taza_mp) this.errorMostrarMsjMetodo.push("La taza no puede estar vacía.");
+      if (!this.moneda_mp) this.errorMostrarMsjMetodo.push("La moneda no puede estar vacía.");
+      if (!this.dias_habiles) this.errorMostrarMsjMetodo.push("Los dias habiles no puede estar vacíos.");
+      if (this.errorMostrarMsjMetodo.length) this.errorMetodo = 1;
+      return this.errorMetodo;
     },
     //Método que sirve para mostrar el modal para guardar/actualizar un proveedor, en este se tiene 2 switch donde se hace uso del modelo correspondiente y la acción, se hace de esta manera debido a que se utiliza el mismo modal para ambas tareas mas sin embargo, los datos que se mandan al controlador son diferentes
     abrirModal: function abrirModal(modelo, accion) {
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
 
       switch (modelo) {
-        case "usuario":
+        case "metodo":
           {
             switch (accion) {
               case 'registrar':
                 {
                   this.modal = 1;
-                  this.tituloModal = 'Registrar Usuario';
+                  this.tituloModal = 'Registrar metodo de pago';
+                  this.nombre_mp = "";
+                  this.cantidad_minretiro = 0;
+                  this.cantidad_maxretiro = 0;
+                  this.cargo_retiro = 0;
+                  this.porcentaje_cargo = 0;
+                  this.taza_mp = 0;
+                  this.moneda_mp = "";
+                  this.dias_habiles = 0;
                   this.tipoAccion = 1;
-                  this.nombre = '';
-                  this.correo_electronico = '';
-                  this.usuario = '';
-                  this.password = '';
-                  this.rol_id = 0;
                   break;
                 }
 
               case 'actualizar':
                 {
                   this.modal = 1;
-                  this.tituloModal = 'Actualizar Usuario';
+                  this.id = data['id'];
+                  this.nombre_mp = data['nombre_mp'];
+                  this.cantidad_minretiro = data['cantidad_minretiro'];
+                  ;
+                  this.cantidad_maxretiro = data['cantidad_maxretiro'];
+                  ;
+                  this.cargo_retiro = data['cargo_retiro'];
+                  ;
+                  this.porcentaje_cargo = data['porcentaje_cargo'];
+                  ;
+                  this.taza_mp = data['taza_mp'];
+                  ;
+                  this.moneda_mp = data['moneda_mp'];
+                  ;
+                  this.dias_habiles = data['dias_habiles'];
                   this.tipoAccion = 2;
-                  this.usuario_id = data['id'];
-                  this.nombre = data['nombre'];
-                  this.correo_electronico = data['correo_electronico'];
-                  this.usuario = data['usuario'];
-                  this.password = data['password'];
-                  this.rol_id = data['rol_id'];
                   break;
                 }
             }
           }
-      }
+      } // this.selectRol();
 
-      this.selectRol();
     },
     //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
     cerrarModal: function cerrarModal() {
-      this.modal = 0;
-      this.tituloModal = '';
-      this.nombre = '';
-      this.correo_electronico = '';
-      this.usuario = '';
-      this.password = '';
-      this.rol_id = 0;
-      this.errorUsuario = 0;
+      this.modal = 0; //   this.imagen_mp,
+
+      this.nombre_mp = "";
+      this.cantidad_minretiro = 0;
+      this.cantidad_maxretiro = 0;
+      this.cargo_retiro = 0;
+      this.porcentaje_cargo = 0;
+      this.taza_mp = 0;
+      this.moneda_mp = "";
+      this.dias_habiles = 0;
     },
-    //Método para desactivar un usuario y no pueda acceder al sistema
-    desactivarUsuario: function desactivarUsuario(id) {
+    desactivarMetodo: function desactivarMetodo(id) {
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -2236,12 +2313,12 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           var me = _this; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
 
-          axios.put('/usuario/desactivar', {
+          axios.put('/metodoPago/desactivar', {
             //Se le asignan los valores recopilados de los inputs del modal
             'id': id
           }).then(function (response) {
             //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
-            me.listarUsuario(1, '', 'nombre');
+            me.listarMetodo(1, '', 'nombre_mp');
             swalWithBootstrapButtons.fire('¡Desactivado!', 'El registro ha sido desactivado con éxito.', 'success');
           })["catch"](function (error) {
             console.log(error);
@@ -2251,8 +2328,7 @@ __webpack_require__.r(__webpack_exports__);
         result.dismiss === Swal.DismissReason.cancel) {}
       });
     },
-    //Método para activar un usuario
-    activarUsuario: function activarUsuario(id) {
+    activarMetodo: function activarMetodo(id) {
       var _this2 = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -2273,12 +2349,12 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           var me = _this2; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/activar' para llamar al controlador y ejecutar la tarea correspondiente
 
-          axios.put('/usuario/activar', {
+          axios.put('/metodoPago/activar', {
             //Se le asignan los valores recopilados de los inputs del modal
             'id': id
           }).then(function (response) {
             //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
-            me.listarUsuario(1, '', 'nombre');
+            me.listarMetodo(1, '', 'nombre_mp');
             swalWithBootstrapButtons.fire('¡Activado!', 'El registro ha sido activado con éxito.', 'success');
           })["catch"](function (error) {
             console.log(error);
@@ -2291,7 +2367,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   //Se utiliza la propiedad 'mounted' para hacer el llamado a los métodos que se quieren cargar automaticamente una vez se muestra el componente 'usuario'
   mounted: function mounted() {
-    this.listarUsuario(1, this.buscar, this.criterio);
+    this.listarMetodo(1, this.buscar, this.criterio);
   }
 });
 
@@ -4484,7 +4560,7 @@ var render = function() {
                 attrs: { type: "button" },
                 on: {
                   click: function($event) {
-                    return _vm.abrirModal("usuario", "registrar")
+                    return _vm.abrirModal("metodo", "registrar")
                   }
                 }
               },
@@ -4528,12 +4604,8 @@ var render = function() {
                       }
                     },
                     [
-                      _c("option", { attrs: { value: "nombre" } }, [
+                      _c("option", { attrs: { value: "nombre_mp" } }, [
                         _vm._v("Nombre")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "correo_electronico" } }, [
-                        _vm._v("Correo Electrónico")
                       ])
                     ]
                   ),
@@ -4564,7 +4636,7 @@ var render = function() {
                         ) {
                           return null
                         }
-                        return _vm.listarUsuario(1, _vm.buscar, _vm.criterio)
+                        return _vm.listarMetodo(1, _vm.buscar, _vm.criterio)
                       },
                       input: function($event) {
                         if ($event.target.composing) {
@@ -4582,7 +4654,7 @@ var render = function() {
                       attrs: { type: "submit" },
                       on: {
                         click: function($event) {
-                          return _vm.listarUsuario(1, _vm.buscar, _vm.criterio)
+                          return _vm.listarMetodo(1, _vm.buscar, _vm.criterio)
                         }
                       }
                     },
@@ -4603,8 +4675,8 @@ var render = function() {
                 _vm._v(" "),
                 _c(
                   "tbody",
-                  _vm._l(_vm.arrayUsuario, function(usuario) {
-                    return _c("tr", { key: usuario.id }, [
+                  _vm._l(_vm.arrayMetodo, function(metodo) {
+                    return _c("tr", { key: metodo.id }, [
                       _c(
                         "td",
                         [
@@ -4616,9 +4688,9 @@ var render = function() {
                               on: {
                                 click: function($event) {
                                   return _vm.abrirModal(
-                                    "usuario",
+                                    "metodo",
                                     "actualizar",
-                                    usuario
+                                    metodo
                                   )
                                 }
                               }
@@ -4626,7 +4698,7 @@ var render = function() {
                             [_c("i", { staticClass: "fas fa-pen" })]
                           ),
                           _vm._v("  \n                                "),
-                          usuario.condicion
+                          metodo.estado_mp
                             ? [
                                 _c(
                                   "button",
@@ -4635,7 +4707,7 @@ var render = function() {
                                     attrs: { type: "button" },
                                     on: {
                                       click: function($event) {
-                                        return _vm.desactivarUsuario(usuario.id)
+                                        return _vm.desactivarMetodo(metodo.id)
                                       }
                                     }
                                   },
@@ -4650,7 +4722,7 @@ var render = function() {
                                     attrs: { type: "button" },
                                     on: {
                                       click: function($event) {
-                                        return _vm.activarUsuario(usuario.id)
+                                        return _vm.activarMetodo(metodo.id)
                                       }
                                     }
                                   },
@@ -4662,21 +4734,45 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: { textContent: _vm._s(usuario.nombre) }
+                        domProps: { textContent: _vm._s(metodo.nombre_mp) }
                       }),
                       _vm._v(" "),
                       _c("td", {
                         domProps: {
-                          textContent: _vm._s(usuario.correo_electronico)
+                          textContent: _vm._s(metodo.cantidad_minretiro)
                         }
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: { textContent: _vm._s(usuario.usuario) }
+                        domProps: {
+                          textContent: _vm._s(metodo.cantidad_maxretiro)
+                        }
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: { textContent: _vm._s(usuario.rol) }
+                        domProps: { textContent: _vm._s(metodo.cargo_retiro) }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
+                        domProps: {
+                          textContent: _vm._s(metodo.porcentaje_cargo)
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
+                        domProps: { textContent: _vm._s(metodo.taza_mp) }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
+                        domProps: { textContent: _vm._s(metodo.moneda_mp) }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
+                        domProps: { textContent: _vm._s(metodo.dias_habiles) }
+                      }),
+                      _vm._v(" "),
+                      _c("td", {
+                        domProps: { textContent: _vm._s(metodo.estado_mp) }
                       })
                     ])
                   }),
@@ -4850,22 +4946,23 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.nombre,
-                                expression: "nombre"
+                                value: _vm.nombre_mp,
+                                expression: "nombre_mp"
                               }
                             ],
                             staticClass: "form-control",
                             attrs: {
                               type: "text",
-                              placeholder: "Ingrese el nombre del usuario"
+                              placeholder:
+                                "Ingrese el nombre del metodo de pago"
                             },
-                            domProps: { value: _vm.nombre },
+                            domProps: { value: _vm.nombre_mp },
                             on: {
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
                                 }
-                                _vm.nombre = $event.target.value
+                                _vm.nombre_mp = $event.target.value
                               }
                             }
                           })
@@ -4879,7 +4976,7 @@ var render = function() {
                             staticClass: "col-md-3 form-control-label",
                             attrs: { for: "text-input" }
                           },
-                          [_vm._v("Correo Electrónico")]
+                          [_vm._v("Cantidad minima retiro")]
                         ),
                         _vm._v(" "),
                         _c("div", { staticClass: "col-md-9" }, [
@@ -4888,107 +4985,22 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.correo_electronico,
-                                expression: "correo_electronico"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "email",
-                              placeholder:
-                                "Ingrese el correo electrónico del usuario"
-                            },
-                            domProps: { value: _vm.correo_electronico },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.correo_electronico = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _vm._m(2),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c(
-                            "select",
-                            {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.rol_id,
-                                  expression: "rol_id"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.rol_id = $event.target.multiple
-                                    ? $$selectedVal
-                                    : $$selectedVal[0]
-                                }
-                              }
-                            },
-                            [
-                              _c("option", { attrs: { value: "0" } }, [
-                                _vm._v("Seleccione una opción: ")
-                              ]),
-                              _vm._v(" "),
-                              _vm._l(_vm.arrayRol, function(rol) {
-                                return _c("option", {
-                                  key: rol.id,
-                                  domProps: {
-                                    value: rol.id,
-                                    textContent: _vm._s(rol.nombre)
-                                  }
-                                })
-                              })
-                            ],
-                            2
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _vm._m(3),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.usuario,
-                                expression: "usuario"
+                                value: _vm.cantidad_minretiro,
+                                expression: "cantidad_minretiro"
                               }
                             ],
                             staticClass: "form-control",
                             attrs: {
                               type: "text",
-                              placeholder: "Ingrese el nombre de usuario"
+                              placeholder: "Ingrese cantidad minima de retiro"
                             },
-                            domProps: { value: _vm.usuario },
+                            domProps: { value: _vm.cantidad_minretiro },
                             on: {
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
                                 }
-                                _vm.usuario = $event.target.value
+                                _vm.cantidad_minretiro = $event.target.value
                               }
                             }
                           })
@@ -4996,7 +5008,14 @@ var render = function() {
                       ]),
                       _vm._v(" "),
                       _c("div", { staticClass: "form-group row" }, [
-                        _vm._m(4),
+                        _c(
+                          "label",
+                          {
+                            staticClass: "col-md-3 form-control-label",
+                            attrs: { for: "text-input" }
+                          },
+                          [_vm._v("Cantidad maxima retiro")]
+                        ),
                         _vm._v(" "),
                         _c("div", { staticClass: "col-md-9" }, [
                           _c("input", {
@@ -5004,22 +5023,212 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.password,
-                                expression: "password"
+                                value: _vm.cantidad_maxretiro,
+                                expression: "cantidad_maxretiro"
                               }
                             ],
                             staticClass: "form-control",
                             attrs: {
-                              type: "password",
-                              placeholder: "Ingrese la contraseña"
+                              type: "text",
+                              placeholder: "Ingrese cantidad maxima de retiro"
                             },
-                            domProps: { value: _vm.password },
+                            domProps: { value: _vm.cantidad_maxretiro },
                             on: {
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
                                 }
-                                _vm.password = $event.target.value
+                                _vm.cantidad_maxretiro = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "col-md-3 form-control-label",
+                            attrs: { for: "text-input" }
+                          },
+                          [_vm._v("Cargo de retiro")]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-9" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.cargo_retiro,
+                                expression: "cargo_retiro"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              placeholder: "Ingrese carg de retoro"
+                            },
+                            domProps: { value: _vm.cargo_retiro },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.cargo_retiro = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "col-md-3 form-control-label",
+                            attrs: { for: "text-input" }
+                          },
+                          [_vm._v("Porcentaje de cargo")]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-9" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.porcentaje_cargo,
+                                expression: "porcentaje_cargo"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              placeholder: "Ingrese porcentaje de cargo"
+                            },
+                            domProps: { value: _vm.porcentaje_cargo },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.porcentaje_cargo = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "col-md-3 form-control-label",
+                            attrs: { for: "text-input" }
+                          },
+                          [_vm._v("Taza")]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-9" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.taza_mp,
+                                expression: "taza_mp"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              placeholder: "Ingrese taza"
+                            },
+                            domProps: { value: _vm.taza_mp },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.taza_mp = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "col-md-3 form-control-label",
+                            attrs: { for: "text-input" }
+                          },
+                          [_vm._v("Moneda")]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-9" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.moneda_mp,
+                                expression: "moneda_mp"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              placeholder: "Ingrese Moneda"
+                            },
+                            domProps: { value: _vm.moneda_mp },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.moneda_mp = $event.target.value
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "col-md-3 form-control-label",
+                            attrs: { for: "text-input" }
+                          },
+                          [_vm._v("Dias habiles")]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-9" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.dias_habiles,
+                                expression: "dias_habiles"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              placeholder: "Ingrese dias habiles"
+                            },
+                            domProps: { value: _vm.dias_habiles },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.dias_habiles = $event.target.value
                               }
                             }
                           })
@@ -5033,8 +5242,8 @@ var render = function() {
                             {
                               name: "show",
                               rawName: "v-show",
-                              value: _vm.errorUsuario,
-                              expression: "errorUsuario"
+                              value: _vm.errorMetodo,
+                              expression: "errorMetodo"
                             }
                           ],
                           staticClass: "form-group row div-error"
@@ -5043,7 +5252,7 @@ var render = function() {
                           _c(
                             "div",
                             { staticClass: "text-center text-error" },
-                            _vm._l(_vm.errorMostrarMsjUsuario, function(error) {
+                            _vm._l(_vm.errorMostrarMsjMetodo, function(error) {
                               return _c("div", {
                                 key: error,
                                 domProps: { textContent: _vm._s(error) }
@@ -5058,7 +5267,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-footer" }, [
-                  _vm._m(5),
+                  _vm._m(2),
                   _vm._v(" "),
                   _c(
                     "button",
@@ -5082,7 +5291,7 @@ var render = function() {
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
-                              return _vm.registrarUsuario()
+                              return _vm.registrarMetodo()
                             }
                           }
                         },
@@ -5098,7 +5307,7 @@ var render = function() {
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
-                              return _vm.actualizarUsuario()
+                              return _vm.actualizarMetodo()
                             }
                           }
                         },
@@ -5133,10 +5342,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", [_vm._v("Opciones")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Imagen")]),
-        _vm._v(" "),
         _c("th", [_vm._v("Nombre")]),
         _vm._v(" "),
         _c("th", [_vm._v("Cant. Min. Retiro")]),
@@ -5156,45 +5361,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Estado")])
       ])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
-      [_vm._v("Rol "), _c("b", [_vm._v("(*)")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
-      [_vm._v("Usuario "), _c("b", [_vm._v("(*)")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
-      [_vm._v("Contraseña "), _c("b", [_vm._v("(*)")])]
-    )
   },
   function() {
     var _vm = this
