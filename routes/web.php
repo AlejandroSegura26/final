@@ -45,7 +45,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/proyecto/proyectocliente','ProyectoController@proyectosCliente');
 
         Route::get('/miembros/proyectos','ProyectoMiembroController@index2');
-
+        //rutas para metodos de pago
+        Route::get('/metodoPago','MetodoPagoController@index');
+        Route::post('/metodoPago/registrar','MetodoPagoController@store');
+        Route::put('/metodoPago/actualizar','MetodoPagoController@update');
+        Route::put('/metodoPago/desactivar','MetodoPagoController@desactivar');
+        Route::put('/metodoPago/activar','MetodoPagoController@activar');
 
     });
     //Rutas para el usuario 'Director de Proyecto'
