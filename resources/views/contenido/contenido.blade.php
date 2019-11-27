@@ -59,8 +59,8 @@
         <template v-if="menu==4">
             <h1>D_Proyecto / 4</h1>
         </template>
-        <template v-if="menu==5">
-            <h1>D_Proyecto / 5</h1>
+        <template v-if="menu==12">
+           <proyectomanager-component></proyectomanager-component>
         </template>
         <template v-if="menu==6">
             <h1>D_Proyecto / 6</h1>
@@ -71,9 +71,7 @@
         <template v-if="menu==8">
             <usuario-component></usuario-component>
         </template>
-        <template v-if="menu==9">
-            <h1>D_Proyecto / 9</h1>
-        </template>
+       
     <!-- Programador -->
     @elseif(Auth::user()->rol_id == 3)
         <template v-if="menu==0">
@@ -91,8 +89,8 @@
         <template v-if="menu==4">
             <h1>Programador / 4</h1>
         </template>
-        <template v-if="menu==5">
-            <h1>Programador / 5</h1>
+        <template v-if="menu==10">
+             <proyectoprogramador-component></proyectoprogramador-component>
         </template>
         <template v-if="menu==6">
             <h1>Programador / 6</h1>
@@ -103,9 +101,7 @@
         <template v-if="menu==8">
             <usuario-component></usuario-component>
         </template>
-        <template v-if="menu==9">
-            <h1>Programador / 9</h1>
-        </template>
+       
     <!-- Cliente -->
     @elseif(Auth::user()->rol_id == 4)
         <template v-if="menu==0">
@@ -123,8 +119,8 @@
         <template v-if="menu==4">
             <h1>Cliente / 4</h1>
         </template>
-        <template v-if="menu==5">
-            <h1>Cliente / 5</h1>
+        <template v-if="menu==11">
+            <proyectocliente-component></proyectocliente-component>
         </template>
         <template v-if="menu==6">
             <h1>Cliente / 6</h1>

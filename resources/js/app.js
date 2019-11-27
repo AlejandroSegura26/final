@@ -24,6 +24,11 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 Vue.component('usuario-component', require('./components/UsuarioComponent.vue').default);
 Vue.component('metodospago-component', require('./components/MetodosPagoComponent.vue').default);
 Vue.component('proyecto-component',require('./components/ProyectosComponent.vue').default);
+Vue.component('proyectocliente-component',require('./components/ProyectosClienteComponent.vue').default);
+Vue.component('proyectomanager-component',require('./components/ProyectosManagerComponent.vue').default);
+Vue.component('proyectoprogramador-component',require('./components/ProyectosProgramadorComponent.vue').default);
+Vue.component('proyectointegrantes-component',require('./components/ProyectoIntegrantesComponent.vue').default);
+Vue.component('proyectotodos-component',require('./components/ProyectoTodosComponent.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

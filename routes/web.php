@@ -33,28 +33,38 @@ Route::group(['middleware' => ['auth']], function () {
       //futas para proyectos
         Route::get('/usuario/selectCliente','UserController@selectCliente');
         Route::get('/usuario/selectManager','UserController@selectManager');
+        Route::get('/usuario/selectProgramador','UserController@selectProgramador');
         Route::get('/proyecto','ProyectoController@index');
         Route::put('/proyecto/actualizar','ProyectoController@update');
         Route::put('/proyecto/desactivar','ProyectoController@desactivar');
         Route::post('/proyecto/registrar','ProyectoController@store');
-      //rutas para metodos de pago
-        Route::get('/metodoPago','MetodoPagoController@index');
-        Route::post('/metodoPago/registrar','MetodoPagoController@store');
-        Route::put('/metodoPago/actualizar','MetodoPagoController@update');
-        Route::put('/metodoPago/desactivar','MetodoPagoController@desactivar');
-        Route::put('/metodoPago/activar','MetodoPagoController@activar');
+        Route::put('/proyecto/cancelar','ProyectoController@cancelar');
+
+        Route::get('/proyecto/proyectoprogramador','ProyectoController@proyectosProgramador');
+        Route::get('/proyecto/proyectomanager','ProyectoController@proyectosManager');
+        Route::get('/proyecto/proyectocliente','ProyectoController@proyectosCliente');
+
+        Route::get('/miembros/proyectos','ProyectoMiembroController@index2');
+
+
     });
     //Rutas para el usuario 'Director de Proyecto'
     Route::group(['middleware' => ['DirectorProyecto']], function () {
-
+   Route::get('/proyecto/proyectomanager','ProyectoController@proyectosManager');
+       Route::put('/proyecto/desactivar','ProyectoController@desactivar');
+       Route::get('/usuario/selectProgramador','UserController@selectProgramador');
+      Route::post('/miembrosProyecto/agregar','ProyectoMiembroController@store');
+      Route::get('/miembrosProyecto','ProyectoMiembroController@index');
     });
     //Rutas para el usuario 'Programador'
-    Route::group(['middleware' => ['Programdor']], function () {
+    Route::group(['middleware' => ['Programador']], function () {
 
+Route::get('/proyecto/proyectoprogramador','ProyectoController@proyectosProgramador');
     });
     //Rutas para el usuario 'Cliente'
     Route::group(['middleware' => ['Cliente']], function () {
-
+      Route::get('/proyecto/proyectocliente','ProyectoController@proyectosCliente');
+      Route::put('/proyecto/cancelar','ProyectoController@cancelar');
     });
     //Contenido principal
     Route::get('/principal', function () {

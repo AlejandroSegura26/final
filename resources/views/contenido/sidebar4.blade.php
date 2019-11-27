@@ -44,7 +44,7 @@
         </a>
       </li>
       <!-- Nav Item - Proyectos -->
-      <li @click="menu=5" class="nav-item">
+      <li @click="menu=11" class="nav-item">
         <a class="nav-link" href="#">
           <i class="fas fa-fw fa-suitcase"></i>
           <span>Proyectos</span>
