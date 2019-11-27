@@ -120,4 +120,14 @@ class UserController extends Controller
         return ['manager' => $manager];
     }
   
+      public function selectProgramador(Request $request)
+    {
+        //Verifica que solo existan peticiones por Ajax, en caso de acceder a una ruta dirigira a la raiz
+        //if (!$request->ajax()) return redirect('/');
+        //Verifica que traiga solo los roles que estan activas y las ordena ascendentemente para guardalas en el arreglo 'roles'
+        $programador = User::where('rol_id','=','3')
+        ->select('id','nombre')->orderBy('nombre','asc')->get();
+        return ['programador' => $programador];
+    }
+  
 }

@@ -21,6 +21,8 @@ class CreateMiembrosProyectoTable extends Migration
             $table->unsignedBigInteger('id_usuario');
             $table->foreign('id_usuario')->references('id')->on('usuarios')->onDelete('cascade');
             $table->string('rol_proyecto',50);
+            $table->string('tipo_pago',50);
+            $table->decimal('cantidad',11,2);
         });
     }
     /**

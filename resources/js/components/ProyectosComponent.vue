@@ -3,14 +3,18 @@
         <!-- Breadcrumb -->
         <ol class="breadcrumb col-lg-12">
             <li class="breadcrumb-item"><a href="/principal">Tablero</a></li>
-            <li class="breadcrumb-item">Proyectos</li>
+            <li class="breadcrumb-item"><a @click="menu=5" href="#">Proyectos</a></li>
+            <li class="breadcrumb-item">Administrador</li>
         </ol>
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-credit-card"></i>&nbsp;&nbsp;Proyectos&nbsp;
-                    <button type="button" @click="abrirModal('proyecto','registrar')" class="btn btn-secondary float-right">
+                    <i class="fa fa-suitcase"></i>&nbsp;&nbsp;Proyectos&nbsp;
+                    <button type="button" @click="abrirModal('proyecto','registrar',0)" class="btn btn-secondary float-right">
                         <i class="fa fa-plus"></i>&nbsp;Nuevo
+                    </button>
+                     <button type="button" @click="menu=15" class="btn btn-secondary float-right">
+                        <i class="fa fa-plus"></i>&nbsp;Ver Programadores Todos Los proyectos
                     </button>
                 </div>
                 <div class="card-body">
@@ -43,14 +47,20 @@
                         <tbody>
                             <tr v-for="proyecto in arrayProyecto" :key="proyecto.id">
                                 <td>
-                                    <button type="button" @click="abrirModal('proyecto','actualizar',proyecto)" class="btn btn-warning btn-sm">
+
+                                    <template v-if="proyecto.estado == 'inicializado'">
+                                     <button type="button" @click="abrirModal('proyecto','actualizar',proyecto,proyecto.id)" class="btn btn-warning btn-sm">
                                         <i class="fas fa-pen"></i>
                                     </button> &nbsp;
-                                    <template v-if="proyecto.estado != 'finalizado' ">
+                                    <button type="button" @click="abrirModal('proyecto','add',proyecto,proyecto.id)" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-plus"></i>
+                                    </button> &nbsp;
                                         <button type="button" class="btn btn-danger btn-sm" @click="desactivarProyecto(proyecto.id)">
                                             <i class="far fa-eye-slash"></i>
                                         </button>
                                     </template>
+
+
 
                                 </td>
                                 <td v-text="proyecto.titulo"></td>
@@ -79,6 +89,12 @@
                 </div>
             </div>
             <!-- Fin de Listado Usuarios -->
+
+            <template style="margin-top:10px;" v-if="menu==15">
+                <proyectotodos-component></proyectotodos-component>
+            </template>
+
+
         </div>
         <!--Inicio del modal agregar/actualizar-->
         <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel"
@@ -92,7 +108,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <form v-if="tipoAccion != 3" action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="text-input">Titulo</label>
                                 <div class="col-md-9">
@@ -122,16 +138,16 @@
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="text-input">Fecha Inicio<b>(*)</b></label>
                                 <div class="col-md-9">
-                                
+
                                     <input type="date" v-model="fecha_inicio" class="form-control"
                                         placeholder="Ingrese la fecha de inicio" min="<?php echo $fecha = date()?>" >
-                                     
+
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="text-input">Fecha Final<b>(*)</b></label>
                                 <div class="col-md-9">
-                                
+
                                     <input type="date" v-model="fecha_final   " class="form-control"
                                         placeholder="Ingrese la fecha de fin "   min="<?php echo $fecha = date()?>" >
                                 </div>
@@ -149,12 +165,59 @@
                                 </div>
                             </div>
                         </form>
+
+                         <form v-else action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Rol</label>
+                                <div class="col-md-9">
+                                    <input type="text" v-model="rol" class="form-control"
+                                        placeholder="Ingrese el Rol del programador">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Programador</label>
+                                <div class="col-md-9">
+                                   <select class="form-control" v-model="id_programador">
+                                        <option value="0">Seleccione una opción: </option>
+                                        <option v-for="programador in arrayProgramador" :key="programador.id" :value="programador.id" v-text="programador.nombre">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">tipo pago</label>
+                                <div class="col-md-9">
+                                   <select class="form-control col-md-3" v-model="tipo_pago">
+                                    <option value="SEMANAL">SEMANAL</option>
+                                    <option value="HORA">POR HORA</option>
+                                    <option value="QUINCENA">QUINCENA</option>
+                                </select>
+                                </div>
+                            </div>
+                           <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Cantidad</label>
+                                <div class="col-md-9">
+                                    <input type="number" step="any" v-model="cantidad" min="0" class="form-control"
+                                        placeholder="Ingrese la cantidad de pago">
+                                </div>
+
+                            </div>
+
+
+                            <div v-show="errorProyecto" class="form-group row div-error">
+                                <div class="text-center text-error">
+                                    <div v-for="error in errorMostrarMsjProyecto" :key="error" v-text="error"></div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <span><b>(*)</b>&nbsp;Campo obligatorio de ingresar</span>
                         <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
                         <button type="button" v-if="tipoAccion==1" class="btn btn-success" @click="registrarProyecto()">Guardar</button>
                         <button type="button" v-if="tipoAccion==2" class="btn btn-warning" @click="actualizarProyecto()">Actualizar</button>
+                        <button type="button" v-if="tipoAccion==3" class="btn btn-success" @click="miembrosProyecto()">Agregar</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -172,11 +235,17 @@
             return {
                 id_proyecto: 0,
                 titulo: '',
+                menu:0,
                 id_manager:0,
                 descripcion: '',
                 fecha_inicio: '',
                 fecha_final: '',
                 id_cliente: 0,
+                id_programador:0,
+                arrayProgramador:[],
+                 rol:'',
+                cantidad:0,
+                tipo_pago:'',
                 arrayProyecto: [],
                 arrayManager: [],
                 arrayCliente: [],
@@ -246,6 +315,7 @@
                     console.log(error);
                 });
             },
+
             //Método para llenar un select con los datos de la tabla rol, mostrando solo aquellos que estan activados
             selectCliente() {
                 let me = this;
@@ -341,12 +411,12 @@
                 if (!this.titulo) this.errorMostrarMsjProyecto.push("El   titulo del proyecto no puede estar vacío.");
                 if (!this.fecha_inicio) this.errorMostrarMsjProyecto.push("   fecha vacia");
                 if (!this.fecha_final) this.errorMostrarMsjProyecto.push("   fecha  final vacia ");
-               
+
                 if (this.errorMostrarMsjProyecto.length) this.errorProyecto = 1;
                 return this.errorProyecto;
             },
             //Método que sirve para mostrar el modal para guardar/actualizar un proveedor, en este se tiene 2 switch donde se hace uso del modelo correspondiente y la acción, se hace de esta manera debido a que se utiliza el mismo modal para ambas tareas mas sin embargo, los datos que se mandan al controlador son diferentes
-            abrirModal(modelo, accion, data = []) {
+            abrirModal(modelo, accion, data = [],id) {
                 switch (modelo) {
                     case "proyecto":
                     {
@@ -371,14 +441,28 @@
                                 this.tipoAccion = 2;
                                 this.id_manager = data['id_manager'];
                                 this.id_cliente= data['id_cliente'];
-                                
+
                                 this.titulo = data['titulo'];
                                 this.descripcion  = data['descripcion'];
                               this.fecha_final = data['fecha_final'];
                                 this.fecha_inicio=data['fecha_inicio'];
-                         
+
                                 this.id_proyecto=data['id'];
-                                
+
+                                break;
+                            }
+                             case 'add':
+                            {
+                                this.modal = 1;
+                                this.id = id;
+                                this.tituloModal = 'Registrar miembros de proyecto';
+                                this.tipoAccion = 3;
+
+                                this.rol = '';
+                                this.tipo_pago ='';
+                                this.cantidad = 0;
+                                this.id_programador = 0;
+
                                 break;
                             }
                         }
@@ -386,6 +470,7 @@
                 }
                 this.selectCliente();
                 this.selectManager();
+                this.selectProgramador();
             },
             //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
             cerrarModal() {
@@ -397,6 +482,11 @@
                                 this.descripcion='';
                                 this.fecha_final='';
                                 this.fecha_inicio='';
+                                this.id_proyecto=0;
+                                this.id_manager=0;
+                                this.tipo_pago ='';
+                                this.cantidad = 0;
+                                this.id_programador = 0;
                 this.errorProyecto= 0;
             },
             //Método para desactivar un usuario y no pueda acceder al sistema
@@ -441,11 +531,75 @@
                     }
                 })
             },
-           
+            //Método para desactivar un usuario y no pueda acceder al sistema
+            miembrosProyecto() {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: '¿Estás seguro de  agregar a este programador al proyecto?     ',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.value) {
+                        let me = this;
+                        //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
+                        axios.post('/miembrosProyecto/agregar',{
+                            //Se le asignan los valores recopilados de los inputs del modal
+
+                            'id_proyecto':this.id,
+                            'tipo_pago':this.tipo_pago,
+                            'cantidad':this.cantidad,
+                            'id_usuario':this.id_programador,
+                            'rol_proyecto':this.rol
+
+
+                        }).then(function (response) {
+
+                            swalWithBootstrapButtons.fire(
+                            '¡Agregado!',
+                            'El programador ha sido agregado con éxito.',
+                            'success'
+                            )
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    } else if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                    }
+                })
+            },
+            selectProgramador(){
+               let me = this;
+                //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
+                var url = '/usuario/selectProgramador';
+                axios.get(url).then(function (response) {
+                    //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
+                    var respuesta = response.data;
+                    //Guarda los datos en el arreglo 'arrayRol'
+                    me.arrayProgramador = respuesta.programador;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+
         },
         //Se utiliza la propiedad 'mounted' para hacer el llamado a los métodos que se quieren cargar automaticamente una vez se muestra el componente 'usuario'
         mounted() {
+
             this.listarProyecto(1,this.buscar,this.criterio);
+
         }
     }
 </script>

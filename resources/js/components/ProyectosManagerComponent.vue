@@ -3,14 +3,15 @@
         <!-- Breadcrumb -->
         <ol class="breadcrumb col-lg-12">
             <li class="breadcrumb-item"><a href="/principal">Tablero</a></li>
-            <li class="breadcrumb-item">Usuarios</li>
+            <li class="breadcrumb-item"><a @click="menu=12" href="#">Proyectos</a></li>
+            <li class="breadcrumb-item">Director de proyecto</li>
         </ol>
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-user"></i>&nbsp;&nbsp;Usuarios&nbsp;
-                    <button type="button" @click="abrirModal('usuario','registrar')" class="btn btn-secondary float-right">
-                        <i class="fa fa-plus"></i>&nbsp;Nuevo
+                    <i class="fa fa-suitcase"></i>&nbsp;&nbsp;Proyectos&nbsp;
+                     <button type="button" @click="menu=14" class="btn btn-secondary float-right">
+                        <i class="fa fa-plus"></i>&nbsp;Ver Programadores
                     </button>
                 </div>
                 <div class="card-body">
@@ -18,12 +19,11 @@
                         <div class="col-md-6">
                             <div class="input-group">
                                 <select class="form-control col-md-3" v-model="criterio">
-                                    <option value="nombre">Nombre</option>
-                                    <option value="correo_electronico">Correo Electrónico</option>
+                                    <option value="titulo">Titulo</option>
                                 </select>
-                                <input type="text" v-model="buscar" @keyup.enter="listarUsuario(1,buscar,criterio)" class="form-control"
+                                <input type="text" v-model="buscar" @keyup.enter="listarProyecto(1,buscar,criterio)" class="form-control"
                                     placeholder="Texto a buscar">
-                                <button type="submit" @click="listarUsuario(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i>
+                                <button type="submit" @click="listarProyecto(1,buscar,criterio)" class="btn btn-primary"><i class="fa fa-search"></i>
                                     Buscar</button>
                             </div>
                         </div>
@@ -32,33 +32,35 @@
                         <thead>
                             <tr>
                                 <th>Opciones</th>
-                                <th>Nombre</th>
-                                <th>Correo Electrónico</th>
-                                <th>Usuario</th>
-                                <th>Rol</th>
+                                <th>Titulo</th>
+                                <th>Cliente</th>
+                                <th>Fecha inicio</th>
+                                <th>Fecha final</th>
+                                <th>Descripcion</th>
+                                <th>Proyect Manager</th>
+                                <th>Estado del proyecto</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="usuario in arrayUsuario" :key="usuario.id">
+                            <tr v-for="proyecto in arrayProyecto" :key="proyecto.id">
                                 <td>
-                                    <button type="button" @click="abrirModal('usuario','actualizar',usuario)" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-pen"></i>
+                                    <template v-if="proyecto.estado == 'inicializado'">
+                                     <button type="button" @click="abrirModal('proyecto','registrar',proyecto,proyecto.id)" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-plus"></i>
                                     </button> &nbsp;
-                                    <template v-if="usuario.condicion">
-                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarUsuario(usuario.id)">
+                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarProyecto(proyecto.id)">
                                             <i class="far fa-eye-slash"></i>
                                         </button>
                                     </template>
-                                    <template v-else>
-                                        <button type="button" class="btn btn-info btn-sm" @click="activarUsuario(usuario.id)">
-                                            <i class="far fa-eye"></i>
-                                        </button>
-                                    </template>
+
                                 </td>
-                                <td v-text="usuario.nombre"></td>
-                                <td v-text="usuario.correo_electronico"></td>
-                                <td v-text="usuario.usuario"></td>
-                                <td v-text="usuario.rol"></td>
+                                <td v-text="proyecto.titulo"></td>
+                                <td v-text="proyecto.cnombre"></td>
+                                <td v-text="proyecto.fecha_inicio"></td>
+                                <td v-text="proyecto.fecha_final"></td>
+                                <td v-text="proyecto.descripcion"></td>
+                                <td v-text="proyecto.mnombre"></td>
+                                <td v-text="proyecto.estado"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -77,9 +79,15 @@
                     </nav>
                 </div>
             </div>
-            <!-- Fin de Listado Usuarios -->
+            <!-- Fin de Listado -->
+
+
+            <template style="margin-top:10px;" v-if="menu==14">
+                <proyectointegrantes-component></proyectointegrantes-component>
+            </template>
+
         </div>
-        <!--Inicio del modal agregar/actualizar-->
+        <!--Inicio del modal agregar-->
         <div class="modal fade" tabindex="-1" :class="{'mostrar' : modal}" role="dialog" aria-labelledby="myModalLabel"
             style="display: none; overflow-y: scroll; padding-top: 55px;" aria-hidden="true">
             <div class="modal-dialog modal-primary modal-lg" role="document">
@@ -93,45 +101,46 @@
                     <div class="modal-body">
                         <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
+                                <label class="col-md-3 form-control-label" for="text-input">Rol</label>
                                 <div class="col-md-9">
-                                    <input type="text" v-model="nombre" class="form-control"
-                                        placeholder="Ingrese el nombre del usuario">
+                                    <input type="text" v-model="rol" class="form-control"
+                                        placeholder="Ingrese el Rol del programador">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Correo Electrónico</label>
+                                <label class="col-md-3 form-control-label" for="text-input">Programador</label>
                                 <div class="col-md-9">
-                                    <input type="email" v-model="correo_electronico" class="form-control"
-                                        placeholder="Ingrese el correo electrónico del usuario">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Rol <b>(*)</b></label>
-                                <div class="col-md-9">
-                                    <select class="form-control" v-model="rol_id">
+                                   <select class="form-control" v-model="id_programador">
                                         <option value="0">Seleccione una opción: </option>
-                                        <option v-for="rol in arrayRol" :key="rol.id" :value="rol.id" v-text="rol.nombre"></option>
+                                        <option v-for="programador in arrayProgramador" :key="programador.id" :value="programador.id" v-text="programador.nombre">
+                                        </option>
                                     </select>
                                 </div>
                             </div>
+
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Usuario <b>(*)</b></label>
+                                <label class="col-md-3 form-control-label" for="text-input">tipo pago</label>
                                 <div class="col-md-9">
-                                    <input type="text" v-model="usuario" class="form-control"
-                                        placeholder="Ingrese el nombre de usuario">
+                                   <select class="form-control col-md-3" v-model="tipo_pago">
+                                    <option value="SEMANAL">SEMANAL</option>
+                                    <option value="HORA">POR HORA</option>
+                                    <option value="QUINCENA">QUINCENA</option>
+                                </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Contraseña <b>(*)</b></label>
+                           <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Cantidad</label>
                                 <div class="col-md-9">
-                                    <input type="password" v-model="password" class="form-control"
-                                        placeholder="Ingrese la contraseña">
+                                    <input type="number" step="any" v-model="cantidad" min="0" class="form-control"
+                                        placeholder="Ingrese la cantidad de pago">
                                 </div>
+
                             </div>
-                            <div v-show="errorUsuario" class="form-group row div-error">
+
+
+                            <div v-show="errorProyecto" class="form-group row div-error">
                                 <div class="text-center text-error">
-                                    <div v-for="error in errorMostrarMsjUsuario" :key="error" v-text="error"></div>
+                                    <div v-for="error in errorMostrarMsjProyecto" :key="error" v-text="error"></div>
                                 </div>
                             </div>
                         </form>
@@ -139,8 +148,8 @@
                     <div class="modal-footer">
                         <span><b>(*)</b>&nbsp;Campo obligatorio de ingresar</span>
                         <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-                        <button type="button" v-if="tipoAccion==1" class="btn btn-success" @click="registrarUsuario()">Guardar</button>
-                        <button type="button" v-if="tipoAccion==2" class="btn btn-warning" @click="actualizarUsuario()">Actualizar</button>
+                        <button type="button" v-if="tipoAccion==1" class="btn btn-success" @click="miembrosProyecto()">Agregar</button>
+
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -156,19 +165,22 @@
         //Propiedad 'data' de javascript donde se declaran las variables necesarias para el funcionamiento del modulo 'categorias', dentro de estas variables tenemos las encargadas de la paginacion, del crud, de la busqueda de registros y del activado y desactivado de la cliente
         data() {
             return {
-                usuario_id: 0,
-                nombre: '',
-                correo_electronico: '',
-                usuario: '',
-                password: '',
-                rol_id: 0,
-                arrayUsuario: [],
-                arrayRol: [],
+
+                titulo: '',
+                id:0,
+                id_programador:0,
+                rol:'',
+                cantidad:0,
+                tipo_pago:'',
+
+                arrayProyecto: [],
+                arrayProgramador:[],
+                menu:0,
                 modal: 0,
                 tituloModal: '',
                 tipoAccion: 0,
-                errorUsuario: 0,
-                errorMostrarMsjUsuario: [],
+                errorProyecto: 0,
+                errorMostrarMsjProyecto: [],
                 pagination: {
                     'total': 0,
                     'current_page': 0,
@@ -178,7 +190,7 @@
                     'to': 0,
                 },
                 offset: 3,
-                criterio: 'nombre',
+                criterio: 'titulo',
                 buscar: ''
             }
         },
@@ -214,15 +226,15 @@
         //Métodos para mostrar, guardar, actualizar, desactivar y activar el usuario
         methods: {
             //Metodo para obtener todos los registros de la bd mediante el uso del controlador definido y en este caso, se tiene tambien la implementacion de la paginacion para ver los registros de acuerdo a lo establecido en el modelo (10 modelos por pagina) y se implementa la busqueda de registros en este metodo debido a que es el que se encarga de mostrar los datos de acuerdo al criterio elegido si es que se ha introducido un texto o mostrar todos los datos en caso de que no sea asi
-            listarUsuario(page,buscar,criterio) {
+            listarProyecto(page,buscar,criterio) {
                 let me = this;
                 //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
-                var url = '/usuario?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
+                var url = '/proyecto/proyectomanager?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
                 axios.get(url).then(function (response) {
                     //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
                     var respuesta = response.data;
                     //Guarda los datos en el arreglo 'arrayUsuario'
-                    me.arrayUsuario = respuesta.usuarios.data;
+                    me.arrayProyecto = respuesta.proyecto.data;
                     //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
                     me.pagination = respuesta.pagination;
                 })
@@ -230,138 +242,58 @@
                     console.log(error);
                 });
             },
-            //Método para llenar un select con los datos de la tabla rol, mostrando solo aquellos que estan activados
-            selectRol() {
-                let me = this;
-                //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
-                var url = '/rol/selectRol';
-                axios.get(url).then(function (response) {
-                    //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
-                    var respuesta = response.data;
-                    //Guarda los datos en el arreglo 'arrayRol'
-                    me.arrayRol = respuesta.roles;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            },
+
+
             //Metodo para mostrar una determinada pagina y los registros asignados a ella
             cambiarPagina(page,buscar,criterio){
                 let me = this;
                 //Actualiza la pagina actual
                 me.pagination.current_page = page;
                 //Envia la peticion para visualizar los datos de esa pagina
-                me.listarUsuario(page,buscar,criterio);
+                me.listarProyecto(page,buscar,criterio);
             },
-            //Método para registrar una categoria a la base de datos
-            registrarUsuario() {
-                //Verifica que el método 'verificarCategoria' haya devuelto un valor, en ese caso, no se realiza ninguna tarea hasta que esto no sea cierto
-                if (this.validarUsuario()) {
-                    return;
-                }
-                let me = this;
-                //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/registrar' para llamar al controlador y ejecutar la tarea correspondiente
-                axios.post('/usuario/registrar',{
-                    //Se le asignan los valores recopilados de los inputs del modal
-                    'nombre': this.nombre,
-                    'correo_electronico': this.correo_electronico,
-                    'usuario': this.usuario,
-                    'password': this.password,
-                    'rol_id': this.rol_id
-                }).then(function (response) {
-                    //Se llama al metodo 'cerrarModal' para ocultarlo y se vuelve a enlistar las categorias de forma descendente, es decir, el registro recien ingresado sera el primero
-                    me.cerrarModal();
-                    me.listarUsuario(1,'','nombre');
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            },
-            //Método para actualizar un registro de la tabla 'persona'
-            actualizarUsuario() {
-                //Verifica que el método 'verificarCategoria' haya devuelto un valor, en ese caso, se muestran los errores al usuario que son arrojados debido a que algun campo obligatorio esta vacio
-                if (this.validarUsuario()) {
-                    return;
-                }
-                let me = this;
-                //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/actualizar' para llamar al controlador y ejecutar la tarea correspondiente
-                axios.put('/usuario/actualizar',{
-                    //Se le asignan los valores recopilados de los inputs del modal
-                    'nombre': this.nombre,
-                    'correo_electronico': this.correo_electronico,
-                    'usuario': this.usuario,
-                    'password': this.password,
-                    'rol_id': this.rol_id,
-                    'id': this.usuario_id
-                }).then(function (response) {
-                    //Se llama al metodo 'cerrarModal' para ocultarlo y se vuelve a enlistar las categorias de forma descendente, es decir, el registro recien ingresado sera el primero
-                    me.cerrarModal();
-                    me.listarUsuario(1,'','nombre');
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            },
-            //Método que sirve para mostrar en el modal errores cuando el usuario no ingresa texto en el input mediante el uso de un array del apartado de estilos
-            validarUsuario() {
-                this.errorUsuario = 0;
-                this.errorMostrarMsjUsuario = [];
-                if (!this.nombre) this.errorMostrarMsjUsuario.push("El nombre del usuario no puede estar vacío.");
-                if (!this.usuario) this.errorMostrarMsjUsuario.push("El usuario no puede estar vacío.");
-                if (!this.password) this.errorMostrarMsjUsuario.push("La contraseña no puede estar vacía.");
-                if (this.rol_id == 0) this.errorMostrarMsjUsuario.push("Seleccione un rol para el usuario.");
-                if (this.errorMostrarMsjUsuario.length) this.errorUsuario = 1;
-                return this.errorUsuario;
-            },
+
             //Método que sirve para mostrar el modal para guardar/actualizar un proveedor, en este se tiene 2 switch donde se hace uso del modelo correspondiente y la acción, se hace de esta manera debido a que se utiliza el mismo modal para ambas tareas mas sin embargo, los datos que se mandan al controlador son diferentes
-            abrirModal(modelo, accion, data = []) {
+            abrirModal(modelo, accion, data = [],id) {
                 switch (modelo) {
-                    case "usuario":
+                    case "proyecto":
                     {
                         switch (accion) {
                             case 'registrar':
                             {
                                 this.modal = 1;
-                                this.tituloModal = 'Registrar Usuario';
+                                this.id = id;
+                                this.tituloModal = 'Registrar miembros de proyecto';
                                 this.tipoAccion = 1;
-                                this.nombre = '';
-                                this.correo_electronico = '';
-                                this.usuario = '';
-                                this.password = '';
-                                this.rol_id = 0;
+                                this.titulo = '';
+                                this.rol = '';
+                                this.tipo_pago ='';
+                                this.cantidad = 0;
+                                this.id_programador = 0;
+
                                 break;
                             }
-                            case 'actualizar':
-                            {
-                                this.modal = 1;
-                                this.tituloModal = 'Actualizar Usuario';
-                                this.tipoAccion = 2;
-                                this.usuario_id = data['id'];
-                                this.nombre = data['nombre'];
-                                this.correo_electronico = data['correo_electronico'];
-                                this.usuario = data['usuario'];
-                                this.password = data['password'];
-                                this.rol_id = data['rol_id'];
-                                break;
-                            }
+
                         }
                     }
                 }
-                this.selectRol();
+                this.selectProgramador();
+
             },
             //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
             cerrarModal() {
                 this.modal = 0;
                 this.tituloModal = '';
-                this.nombre = '';
-                this.correo_electronico = '';
-                this.usuario = '';
-                this.password = '';
-                this.rol_id = 0;
-                this.errorUsuario = 0;
+                this.titulo = '';
+                                this.id_proyecto=0;
+                                this.id_manager=0;
+                                this.tipo_pago ='';
+                                this.cantidad = 0;
+                                this.id_programador = 0;
+                this.errorProyecto= 0;
             },
             //Método para desactivar un usuario y no pueda acceder al sistema
-            desactivarUsuario(id) {
+            desactivarProyecto(id) {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -370,7 +302,7 @@
                     buttonsStyling: false
                 })
                 swalWithBootstrapButtons.fire({
-                    title: '¿Estás seguro de desactivar este usuario?',
+                    title: '¿Estás seguro de   finalizar   el  proyecto?     ',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Aceptar',
@@ -380,12 +312,12 @@
                     if (result.value) {
                         let me = this;
                         //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
-                        axios.put('/usuario/desactivar',{
+                        axios.put('/proyecto/desactivar',{
                             //Se le asignan los valores recopilados de los inputs del modal
                             'id': id
                         }).then(function (response) {
                             //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
-                            me.listarUsuario(1,'','nombre');
+                            me.listarProyecto(1,'','proyecto');
                             swalWithBootstrapButtons.fire(
                             '¡Desactivado!',
                             'El registro ha sido desactivado con éxito.',
@@ -402,8 +334,8 @@
                     }
                 })
             },
-            //Método para activar un usuario
-            activarUsuario(id) {
+            //Método para desactivar un usuario y no pueda acceder al sistema
+            miembrosProyecto() {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -412,7 +344,7 @@
                     buttonsStyling: false
                 })
                 swalWithBootstrapButtons.fire({
-                    title: '¿Estás seguro de activar este usuario?',
+                    title: '¿Estás seguro de  agregar a este programador al proyecto?     ',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Aceptar',
@@ -421,16 +353,22 @@
                 }).then((result) => {
                     if (result.value) {
                         let me = this;
-                        //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/activar' para llamar al controlador y ejecutar la tarea correspondiente
-                        axios.put('/usuario/activar',{
+                        //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
+                        axios.post('/miembrosProyecto/agregar',{
                             //Se le asignan los valores recopilados de los inputs del modal
-                            'id': id
+
+                            'id_proyecto':this.id,
+                            'tipo_pago':this.tipo_pago,
+                            'cantidad':this.cantidad,
+                            'id_usuario':this.id_programador,
+                            'rol_proyecto':this.rol
+
+
                         }).then(function (response) {
-                            //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
-                            me.listarUsuario(1,'','nombre');
+
                             swalWithBootstrapButtons.fire(
-                            '¡Activado!',
-                            'El registro ha sido activado con éxito.',
+                            '¡Agregado!',
+                            'El programador ha sido agregado con éxito.',
                             'success'
                             )
                         })
@@ -444,10 +382,27 @@
                     }
                 })
             },
+            selectProgramador(){
+               let me = this;
+                //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
+                var url = '/usuario/selectProgramador';
+                axios.get(url).then(function (response) {
+                    //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
+                    var respuesta = response.data;
+                    //Guarda los datos en el arreglo 'arrayRol'
+                    me.arrayProgramador = respuesta.programador;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+
         },
         //Se utiliza la propiedad 'mounted' para hacer el llamado a los métodos que se quieren cargar automaticamente una vez se muestra el componente 'usuario'
         mounted() {
-            this.listarUsuario(1,this.buscar,this.criterio);
+
+            this.listarProyecto(1,this.buscar,this.criterio);
+
         }
     }
 </script>

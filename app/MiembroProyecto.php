@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MiembroProyecto extends Model
 {
     protected $table = 'miembros_proyecto';
-    protected $filltable =['id_proyecto','id_usuario','rol_proyecto'];
+    protected $filltable =['id_proyecto','id_usuario','rol_proyecto','cantidad','tipo_pago'];
     public $timestamps = false;
     public function user(){
         return $this -> hasMany('App\User');
