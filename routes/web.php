@@ -51,15 +51,21 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/metodoPago/actualizar','MetodoPagoController@update');
         Route::put('/metodoPago/desactivar','MetodoPagoController@desactivar');
         Route::put('/metodoPago/activar','MetodoPagoController@activar');
+        
 
     });
     //Rutas para el usuario 'Director de Proyecto'
-    Route::group(['middleware' => ['DirectorProyecto']], function () {
-   Route::get('/proyecto/proyectomanager','ProyectoController@proyectosManager');
-       Route::put('/proyecto/desactivar','ProyectoController@desactivar');
-       Route::get('/usuario/selectProgramador','UserController@selectProgramador');
-      Route::post('/miembrosProyecto/agregar','ProyectoMiembroController@store');
-      Route::get('/miembrosProyecto','ProyectoMiembroController@index');
+        Route::group(['middleware' => ['DirectorProyecto']], function () 
+        {
+            Route::get('/proyecto/proyectomanager','ProyectoController@proyectosManager');
+            Route::put('/proyecto/desactivar','ProyectoController@desactivar');
+            Route::get('/usuario/selectProgramador','UserController@selectProgramador');
+            Route::get('/usuario/selectProyecto','ProyectoController@selectProyecto');
+            Route::post('/miembrosProyecto/agregar','ProyectoMiembroController@store');
+            Route::get('/miembrosProyecto','ProyectoMiembroController@index');
+            Route::post('/hito/registrar','HitoController@store');
+            Route::put('/hito/actualizar','HitoController@update');
+            Route::get('/hito','HitoController@index');
     });
     //Rutas para el usuario 'Programador'
     Route::group(['middleware' => ['Programador']], function () {

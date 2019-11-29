@@ -48,10 +48,10 @@
             <h1>¡Bienvenido {{Auth::user()->usuario}}!</h1>
         </template>
         <template v-if="menu==1">
-            <h1>D_Proyecto / 1</h1>
+            <hitos-component></hitos-component>
         </template>
         <template v-if="menu==2">
-            <h1>D_Proyecto / 2</h1>
+        <tareas-component></tareas-component>
         </template>
         <template v-if="menu==3">
             <h1>D_Proyecto / 3</h1>
