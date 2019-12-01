@@ -32,7 +32,8 @@ Vue.component('proyectotodos-component',require('./components/ProyectoTodosCompo
 Vue.component('aretiros-component',require('./components/AceptarPeticionComponent.vue').default);
 Vue.component('retiros-component',require('./components/PeticionComponent.vue').default);
 Vue.component('mretiros-component',require('./components/PeticionComponentManager.vue').default);
-
+Vue.component('hitos-component',require('./components/HitosComponent.vue').default);
+Vue.component('tareas-component',require('./components/TareasComponent.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
