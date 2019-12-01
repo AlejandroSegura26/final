@@ -206,7 +206,7 @@
                             </div>
                             <div v-show="errorProyecto" class="form-group row div-error">
                                 <div class="text-center text-error">
-                                    <div v-for="error in errorMostrarMsjProyecto" :key="error" v-text="error"></div>
+                                    <div v-for="error in errorMostrarMsjTarea" :key="error" v-text="error"></div>
                                 </div>
                             </div>
                         </form>
@@ -256,7 +256,9 @@
                 tituloModal: '',
                 tipoAccion: 0,
                 errorProyecto: 0,
+                errorTarea:0,
                 errorMostrarMsjProyecto: [],
+               errorMostrarMsjTarea: [],
                 pagination: {
                     'total': 0,
                     'current_page': 0,
@@ -415,13 +417,16 @@
             validarHito() {
                 this.errorProyecto = 0;
                 this.errorMostrarMsjProyecto = [];
-                if (!this.titulo) this.errorMostrarMsjProyecto.push("El   titulo del proyecto no puede estar vacío.");
-                if (!this.fecha_inicio) this.errorMostrarMsjProyecto.push("   fecha vacia");
-                if (!this.fecha_final) this.errorMostrarMsjProyecto.push("   fecha  final vacia ");
+              if (!this.id_proyecto) this.errorMostrarMsjProyecto.push("Debe elegir un proyecto");
+                if (!this.titulo) this.errorMostrarMsjProyecto.push("El hito del proyecto no puede estar vacío.");
+               if (!this.fecha_inicio) this.errorMostrarMsjProyecto.push("La fecha de inicio no puede estar vacia ");  
+              if (!this.fecha_final) this.errorMostrarMsjProyecto.push("La fecha de fin no puede estar vacia vacia ");
+              if (!this.descripcion) this.errorMostrarMsjProyecto.push("La descripcion no puede estar vacia ");
 
                 if (this.errorMostrarMsjProyecto.length) this.errorProyecto = 1;
                 return this.errorProyecto;
             },
+         
             //Método que sirve para mostrar el modal para guardar/actualizar un proveedor, en este se tiene 2 switch donde se hace uso del modelo correspondiente y la acción, se hace de esta manera debido a que se utiliza el mismo modal para ambas tareas mas sin embargo, los datos que se mandan al controlador son diferentes
             abrirModal(modelo, accion, data = [],id) {
                 switch (modelo) {
@@ -463,7 +468,7 @@
                                 this.miembro_id=0;
                                 this.fecha_inicio=0;
                                 this.horas=0;
-                                this.descripcion=0;
+                                this.descripcion="";
                                 this.tipoAccion = 3;
                                 this.selectProgramador(id);
                                 break;

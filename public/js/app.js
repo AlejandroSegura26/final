@@ -2252,9 +2252,11 @@ __webpack_require__.r(__webpack_exports__);
     validarHito: function validarHito() {
       this.errorProyecto = 0;
       this.errorMostrarMsjProyecto = [];
-      if (!this.titulo) this.errorMostrarMsjProyecto.push("El   titulo del proyecto no puede estar vacío.");
-      if (!this.fecha_inicio) this.errorMostrarMsjProyecto.push("   fecha vacia");
-      if (!this.fecha_final) this.errorMostrarMsjProyecto.push("   fecha  final vacia ");
+      if (!this.id_proyecto) this.errorMostrarMsjProyecto.push("Debe elegir un proyecto");
+      if (!this.titulo) this.errorMostrarMsjProyecto.push("El hito del proyecto no puede estar vacío.");
+      if (!this.fecha_inicio) this.errorMostrarMsjProyecto.push("La fecha de inicio no puede estar vacia ");
+      if (!this.fecha_final) this.errorMostrarMsjProyecto.push("La fecha de fin no puede estar vacia vacia ");
+      if (!this.descripcion) this.errorMostrarMsjProyecto.push("La descripcion no puede estar vacia ");
       if (this.errorMostrarMsjProyecto.length) this.errorProyecto = 1;
       return this.errorProyecto;
     },
