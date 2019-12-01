@@ -13,7 +13,8 @@ class Hito extends Model
     'titulo',
     'fecha_inicio',
     'fecha_fin',
-    'descripcion'];
+    'descripcion',
+    'estado'];
     public $timestamps = false;
 
 

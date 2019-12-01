@@ -16,17 +16,18 @@ class HitoController extends Controller
            $criterio = $request->criterio;
          
             if ($buscar == '') {
-            $hito =Hito::join('proyecto AS p','p.id','=','hitos.id')
-            ->select('hitos.id','p.titulo as ptitulo','hitos.titulo','hitos.fecha_inicio','hitos.fecha_fin','hitos.descripcion')
-            ->orderBy('hitos.id','desc')
+            $hito =Hito::join('proyecto AS p','p.id','=','hitos.id_proyecto')
+            ->select('hitos.id','p.titulo as ptitulo','hitos.titulo','hitos.fecha_inicio','hitos.fecha_fin','hitos.descripcion','hitos.estado')
+            ->where('p.id_manager','=',Auth::user()->id)
+              ->orderBy('hitos.id','desc')
             ->paginate(5);
               
         //En caso contrario devuelve aquellos registros que coinciden con el texto a buscar y lo ordena descendentemente y los pagina de 5 en 5
         } else {
-            $proyecto =Proyecto::join('usuarios AS cliente','cliente.id','=','proyecto.id_cliente')->join('usuarios AS manager','manager.id','=','proyecto.id_manager')
-            ->select('proyecto.id','cliente.nombre AS cnombre','manager.nombre AS mnombre','proyecto.titulo','proyecto.fecha_inicio','proyecto.fecha_final','proyecto.estado','proyecto.descripcion')
-            ->where('proyecto.'.$criterio,'like','%'.$buscar.'%')
-            ->orderBy('proyecto.id','desc')
+             $hito =Hito::join('proyecto AS p','p.id','=','hitos.id')
+            ->select('hitos.id','p.titulo as ptitulo','hitos.titulo','hitos.fecha_inicio','hitos.fecha_fin','hitos.descripcion','hitos.estado')
+               ->where('hitos.'.$criterio,'like','%'.$buscar.'%')
+             ->orderBy('hitos.id','desc')
             ->paginate(5);
         }
 
@@ -59,6 +60,7 @@ class HitoController extends Controller
        public function update(Request $request)
        {
             if (!$request->ajax()) return redirect('/');
+          
             $hito = Hito :: findOrFail($request->id);
             $hito -> id_proyecto = $request -> id_proyecto;
             $hito -> titulo = $request -> titulo;
@@ -79,4 +81,26 @@ class HitoController extends Controller
             ->orderBy('hitos.id','desc')->get();
         return ['hito' => $hito];
     }
+  
+     public function desactivar(Request $request)
+       {
+         // if (!$request->ajax()) return redirect('/');
+            $hito =Hito::join('tareas','tareas.hito_id','=','hitos.id')
+            ->select('tareas.id')
+            ->where('hitos.id','=',$request->id)
+              ->where('tareas.estado','=',1)
+              ->count();
+
+             if($hito>0)
+               return 0;
+            else
+            {
+              $hito = Hito :: findOrFail($request->id);
+              $hito -> estado = 0;
+              $hito -> save();
+              return 1;
+            }
+       }
+  
+  
 }

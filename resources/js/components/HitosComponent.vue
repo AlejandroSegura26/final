@@ -41,6 +41,7 @@
                                 <th>Fecha inicio</th>
                                 <th>Fecha final</th>
                                 <th>Descripcion</th>
+                                <th>Estado</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -53,16 +54,12 @@
                                         <i class="fas fa-plus"></i>
                                     </button> &nbsp;
                                        
-                                   <!--  <template v-if="proyecto.estado == 'inicializado'">
-                                  
-                                    <button type="button" @click="abrirModal('hito','add',hito,hito.id)" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-plus"></i>
-                                    </button> &nbsp;
-                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarProyecto(proyecto.id)">
+                                        <template v-if="hito.estado">
+                                        <button type="button" class="btn btn-danger btn-sm" @click="desactivarHito(hito.id)">
                                             <i class="far fa-eye-slash"></i>
-                                        </button>
-                                    </template>-->
-
+                                        </button>&nbsp;
+                                    </template>
+ 
 
 
                                 </td>
@@ -71,6 +68,12 @@
                                 <td v-text="hito.fecha_inicio"></td>
                                 <td v-text="hito.fecha_fin"></td>
                                 <td v-text="hito.descripcion"></td>
+                                  <template v-if="hito.estado">
+                                     <td  >Activo</td>
+                                   </template>     
+                                    <template v-else>
+                                            <td  >Terminado</td>
+                                    </template>
                             </tr>
                         </tbody>
                     </table>
@@ -230,7 +233,7 @@
         data() {
             return {
                 id_proyecto: 0,
-                id_hito: 0,
+                hito_id: 0,
                 titulo: '',
                 menu:0,
               miembro_id:0,
@@ -331,29 +334,16 @@
                     console.log(error);
                 });
             },
-             selectManager() {
-                let me = this;
-                //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
-                var url = '/usuario/selectManager';
-                axios.get(url).then(function (response) {
-                    //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
-                    var respuesta = response.data;
-                    //Guarda los datos en el arreglo 'arrayRol'
-                    me.arrayManager = respuesta.manager;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            },
-            selectProyecto(page) {
+       
+            selectProyecto( ) {
                  let me = this;
                 //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
-                var url = '/usuario/selectManager?page=' + page ;
+                var url = '/usuario/selectProyecto';
                 axios.get(url).then(function (response) {
                     //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
                     var respuesta = response.data;
                     //Guarda los datos en el arreglo 'arrayUsuario'
-                    me.arrayProgramador  = respuesta.programadorAASSSSS;
+                    me.arrayProyecto  = respuesta.proyecto;
                     //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
  
                 })
@@ -448,6 +438,7 @@
                                 this.fecha_inicio='';
                                 this.fecha_fin='';
                                 this.descripcion='';
+                                this.selectProyecto();
                                 break;
                             }
                             case 'actualizar':
@@ -461,18 +452,19 @@
                                 this.descripcion  = data['descripcion'];
                                 this.fecha_inicio=data['fecha_inicio'];
                                 this.fecha_fi = data['fecha_fin'];
+                                this.selectProyecto();
                                 break;
                             }
                              case 'add':
                             {
                                 this.modal = 1;
                                 this.tituloModal = 'Registrar tarea';
-                                this.hito_id=id;
+                                this.hito_id=data['id'];
                                 this.miembro_id=0;
                                 this.fecha_inicio=0;
                                 this.horas=0;
                                 this.descripcion=0;
-                              this.tipoAccion = 3;
+                                this.tipoAccion = 3;
                                 this.selectProgramador(id);
                                 break;
                             }
@@ -481,7 +473,7 @@
                 }
                 //this.selectCliente();
                // this.selectManager();
-                this.selectProyecto();
+                
              
             },
             //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
@@ -502,7 +494,7 @@
                 this.errorProyecto= 0;
             },
             //Método para desactivar un usuario y no pueda acceder al sistema
-            desactivarProyecto(id) {
+            desactivarHito(id) {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -521,17 +513,29 @@
                     if (result.value) {
                         let me = this;
                         //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
-                        axios.put('/proyecto/desactivar',{
-                            //Se le asignan los valores recopilados de los inputs del modal
-                            'id': id
+                        axios.post('/hito/desactivar',{
+                            'id':id,
                         }).then(function (response) {
                             //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
-                            me.listarHito(1,'','proyecto');
-                            swalWithBootstrapButtons.fire(
-                            '¡Desactivado!',
-                            'El registro ha sido desactivado con éxito.',
+                           console.log(response.data);
+                          console.log(id);
+                           if(response.data==1)
+                             {
+                              swalWithBootstrapButtons.fire(
+                            '¡finalizado!',
+                            'El proyecto ha sido finalizado con éxito.',
                             'success'
-                            )
+                            ) 
+                                me.listarHito(1,'','titulo');
+                             }
+                          else
+                            {
+                                  swalWithBootstrapButtons.fire(
+                          
+                            'No puede finalzar este proyecto ya que tiene tareas activas.',
+                           
+                            ) 
+                            }
                         })
                         .catch(function (error) {
                             console.log(error);
@@ -545,6 +549,7 @@
             },
             //Método para desactivar un usuario y no pueda acceder al sistema
             agregarTarea() {
+                      console.log(this.hito_id);
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -562,6 +567,7 @@
                 }).then((result) => {
                     if (result.value) {
                         let me = this;
+              
                         //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
                         axios.post('/tarea/registrar',{
                             //Se le asignan los valores recopilados de los inputs del modal
@@ -574,12 +580,22 @@
                           
 
                         }).then(function (response) {
-
+                            if(response.data==1)
+                              {
+                                
                             swalWithBootstrapButtons.fire(
                             '¡Agregado!',
-                            'El programador ha sido agregado con éxito.',
+                            'La tarea ha sido agregada con éxito.',
                             'success'
                             )
+                              }
+                          else
+                            {
+                              
+                            swalWithBootstrapButtons.fire(
+                            'No se puede agregar esta tarea ya que el hito no esta activo'
+                            )
+                            }
                         })
                         .catch(function (error) {
                             console.log(error);

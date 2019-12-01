@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Tarea;
+use App\Hito;
 class TareaController extends Controller
 {
   
@@ -17,18 +18,19 @@ class TareaController extends Controller
             if ($buscar == '') {
             $tarea =Tarea::join('hitos','hitos.id','=','tareas.hito_id')
               ->join('usuarios','usuarios.id','=','tareas.miembro_id')
-            ->select('tareas.descripcion','hitos.titulo','usuarios.nombre','tareas.fecha_inicio','tareas.horas')
+            ->select('tareas.id','tareas.descripcion','hitos.titulo','usuarios.nombre','tareas.fecha_inicio','tareas.horas','tareas.estado')
             ->orderBy('tareas.id','desc')
             ->paginate(5);
               
         //En caso contrario devuelve aquellos registros que coinciden con el texto a buscar y lo ordena descendentemente y los pagina de 5 en 5
-        } /*else {
-            $proyecto =Proyecto::join('usuarios AS cliente','cliente.id','=','proyecto.id_cliente')->join('usuarios AS manager','manager.id','=','proyecto.id_manager')
-            ->select('proyecto.id','cliente.nombre AS cnombre','manager.nombre AS mnombre','proyecto.titulo','proyecto.fecha_inicio','proyecto.fecha_final','proyecto.estado','proyecto.descripcion')
-            ->where('proyecto.'.$criterio,'like','%'.$buscar.'%')
-            ->orderBy('proyecto.id','desc')
+        }  else {
+           $tarea =Tarea::join('hitos','hitos.id','=','tareas.hito_id')
+              ->join('usuarios','usuarios.id','=','tareas.miembro_id')
+            ->select('tareas.id','tareas.descripcion','hitos.titulo','usuarios.nombre','tareas.fecha_inicio','tareas.horas','tareas.estado')
+            ->where('tareas.'.$criterio,'like','%'.$buscar.'%')
+            ->orderBy('tareas.id','desc')
             ->paginate(5);
-       }*/
+       } 
     
       return [
             'pagination' => [
@@ -49,18 +51,36 @@ class TareaController extends Controller
         if (!$request->ajax()) return redirect('/');
         //Se utiliza el metodo 'beginTransaction' para hacer la insercion en la tabla 'personas' y 'proveedores' a la vez, en caso de que no ocurra algun error, se ejecuta la transaccion, en caso contrario, se hace un rollback para eliminar la transaccion creada y no agregar el registro a la base de datos
         //Declaración del objeto 'usuarios'
-        $tarea = new Tarea();
-        //Storage::disk('local')->put($request->imagen);
-        //Asignación de los valores recopilados de los inputs al objeto 'persona' que sirve para llamar al modelo y guardar el registro en la base de datos
-        //$metodo->imagen_mp = $request->nombre;
-        $tarea->hito_id = $request->hito_id;
-        $tarea->miembro_id = $request->miembro_id;
-        $tarea->fecha_inicio = $request->fecha_inicio;
-        $tarea->horas = $request->horas;
-        $tarea->descripcion = $request->descripcion;
-        $tarea->estado = 1;
-        $tarea->save();
+        
+         $hito =Hito:: select('hitos.id')
+            ->where('hitos.id','=',$request->hito_id)
+              ->where('hitos.estado','=',1)
+              ->count();
+        if($hito>0)
+        {
+          $tarea = new Tarea();
+          $tarea->hito_id = $request->hito_id;
+          $tarea->miembro_id = $request->miembro_id;
+          $tarea->fecha_inicio = $request->fecha_inicio;
+          $tarea->horas = $request->horas;
+          $tarea->descripcion = $request->descripcion;
+          $tarea->estado = 1;
+          $tarea->save();
+          return 1;
+        }
+        else
+          return 0;
     }
+  
+      public function desactivar(Request $request)
+       {
+          if (!$request->ajax()) return redirect('/');
+              $tarea = Tarea :: findOrFail($request->id);
+               $tarea -> estado = 0;
+               $tarea -> save();
+      
+       }
+  
 /*
     public function update(Request $request)
     {

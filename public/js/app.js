@@ -2064,12 +2064,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   //Propiedad 'data' de javascript donde se declaran las variables necesarias para el funcionamiento del modulo 'categorias', dentro de estas variables tenemos las encargadas de la paginacion, del crud, de la busqueda de registros y del activado y desactivado de la cliente
   data: function data() {
     return {
       id_proyecto: 0,
-      id_hito: 0,
+      hito_id: 0,
       titulo: '',
       menu: 0,
       miembro_id: 0,
@@ -2174,28 +2177,15 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    selectManager: function selectManager() {
-      var me = this; //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
-
-      var url = '/usuario/selectManager';
-      axios.get(url).then(function (response) {
-        //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
-        var respuesta = response.data; //Guarda los datos en el arreglo 'arrayRol'
-
-        me.arrayManager = respuesta.manager;
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    selectProyecto: function selectProyecto(page) {
+    selectProyecto: function selectProyecto() {
       var me = this; //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
 
-      var url = '/usuario/selectManager?page=' + page;
+      var url = '/usuario/selectProyecto';
       axios.get(url).then(function (response) {
         //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
         var respuesta = response.data; //Guarda los datos en el arreglo 'arrayUsuario'
 
-        me.arrayProgramador = respuesta.programadorAASSSSS; //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
+        me.arrayProyecto = respuesta.proyecto; //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2287,6 +2277,7 @@ __webpack_require__.r(__webpack_exports__);
                   this.fecha_inicio = '';
                   this.fecha_fin = '';
                   this.descripcion = '';
+                  this.selectProyecto();
                   break;
                 }
 
@@ -2301,6 +2292,7 @@ __webpack_require__.r(__webpack_exports__);
                   this.descripcion = data['descripcion'];
                   this.fecha_inicio = data['fecha_inicio'];
                   this.fecha_fi = data['fecha_fin'];
+                  this.selectProyecto();
                   break;
                 }
 
@@ -2308,7 +2300,7 @@ __webpack_require__.r(__webpack_exports__);
                 {
                   this.modal = 1;
                   this.tituloModal = 'Registrar tarea';
-                  this.hito_id = id;
+                  this.hito_id = data['id'];
                   this.miembro_id = 0;
                   this.fecha_inicio = 0;
                   this.horas = 0;
@@ -2322,8 +2314,6 @@ __webpack_require__.r(__webpack_exports__);
       } //this.selectCliente();
       // this.selectManager();
 
-
-      this.selectProyecto();
     },
     //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
     cerrarModal: function cerrarModal() {
@@ -2343,7 +2333,7 @@ __webpack_require__.r(__webpack_exports__);
       this.errorProyecto = 0;
     },
     //Método para desactivar un usuario y no pueda acceder al sistema
-    desactivarProyecto: function desactivarProyecto(id) {
+    desactivarHito: function desactivarHito(id) {
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -2364,13 +2354,19 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           var me = _this; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
 
-          axios.put('/proyecto/desactivar', {
-            //Se le asignan los valores recopilados de los inputs del modal
+          axios.post('/hito/desactivar', {
             'id': id
           }).then(function (response) {
             //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
-            me.listarHito(1, '', 'proyecto');
-            swalWithBootstrapButtons.fire('¡Desactivado!', 'El registro ha sido desactivado con éxito.', 'success');
+            console.log(response.data);
+            console.log(id);
+
+            if (response.data == 1) {
+              swalWithBootstrapButtons.fire('¡finalizado!', 'El proyecto ha sido finalizado con éxito.', 'success');
+              me.listarHito(1, '', 'titulo');
+            } else {
+              swalWithBootstrapButtons.fire('No puede finalzar este proyecto ya que tiene tareas activas.');
+            }
           })["catch"](function (error) {
             console.log(error);
           });
@@ -2383,6 +2379,7 @@ __webpack_require__.r(__webpack_exports__);
     agregarTarea: function agregarTarea() {
       var _this2 = this;
 
+      console.log(this.hito_id);
       var swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: 'btn btn-success',
@@ -2409,7 +2406,11 @@ __webpack_require__.r(__webpack_exports__);
             'horas': _this2.horas,
             'descripcion': _this2.descripcion
           }).then(function (response) {
-            swalWithBootstrapButtons.fire('¡Agregado!', 'El programador ha sido agregado con éxito.', 'success');
+            if (response.data == 1) {
+              swalWithBootstrapButtons.fire('¡Agregado!', 'La tarea ha sido agregada con éxito.', 'success');
+            } else {
+              swalWithBootstrapButtons.fire('No se puede agregar esta tarea ya que el hito no esta activo');
+            }
           })["catch"](function (error) {
             console.log(error);
           });
@@ -4803,104 +4804,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   //Propiedad 'data' de javascript donde se declaran las variables necesarias para el funcionamiento del modulo 'categorias', dentro de estas variables tenemos las encargadas de la paginacion, del crud, de la busqueda de registros y del activado y desactivado de la cliente
   data: function data() {
     return {
       id: 0,
-      nombre_mp: '',
-      //    imagen:'',
-      //   imagenMiniatura:'',
       hito_id: 0,
       miembro_id: 0,
       fecha_inicio: 0,
       horas: 0,
       descripcion: '',
-      cantidad_minretiro: 0,
-      cantidad_maxretiro: 0,
-      cargo_retiro: 0,
-      porcentaje_cargo: 0,
-      taza_mp: 0,
-      moneda_mp: '',
-      dias_habiles: 0,
-      arrayHito: [],
       arrayTareas: [],
-      arrayMetodo: [],
-      arrayProgramador: [],
-      arrayRol: [],
       modal: 0,
       tituloModal: '',
       tipoAccion: 0,
@@ -4960,22 +4874,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   //Métodos para mostrar, guardar, actualizar, desactivar y activar el usuario
   methods: {
-    /* obtenerImagen(e)
-     {
-         let file= e.target.files[0];
-         console.log(file);
-         this.imagen=file;
-          this.cargarImagen(file);
-     },
-     cargarImagen(file)
-     {
-         let reader= new FileReader();
-         reader.onload= (e)=>
-         {
-             this.imagenMiniatura=e.target.result;
-         }
-         reader.readAsDataURL(file);
-     },*/
     //Metodo para obtener todos los registros de la bd mediante el uso del controlador definido y en este caso, se tiene tambien la implementacion de la paginacion para ver los registros de acuerdo a lo establecido en el modelo (10 modelos por pagina) y se implementa la busqueda de registros en este metodo debido a que es el que se encarga de mostrar los datos de acuerdo al criterio elegido si es que se ha introducido un texto o mostrar todos los datos en caso de que no sea asi
     listarTarea: function listarTarea(page, buscar, criterio) {
       var me = this; //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
@@ -5001,150 +4899,7 @@ __webpack_require__.r(__webpack_exports__);
       me.listarTarea(page, buscar, criterio);
     },
     //Método para registrar una categoria a la base de datos
-    registrarTarea: function registrarTarea() {
-      //Verifica que el método 'verificarCategoria' haya devuelto un valor, en ese caso, no se realiza ninguna tarea hasta que esto no sea cierto
-      if (this.validarTarea()) {
-        return;
-      }
-
-      var me = this; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/registrar' para llamar al controlador y ejecutar la tarea correspondiente
-
-      axios.post('/tarea/registrar', {
-        //Se le asignan los valores recopilados de los inputs del modal
-        //  'imagen_mp': this.imagen_mp,
-        'hito_id': this.hito_id,
-        'miembro_id': this.miembro_id,
-        'fecha_inicio': this.fecha_inicio,
-        'horas': this.horas,
-        'descripcion': this.descripcion // 'imagen': this.imagen
-
-      }).then(function (response) {
-        //Se llama al metodo 'cerrarModal' para ocultarlo y se vuelve a enlistar las categorias de forma descendente, es decir, el registro recien ingresado sera el primero
-        me.cerrarModal();
-        me.listarTarea(1, '', 'nombre_mp');
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    //Método para actualizar un registro de la tabla 'persona'
-    actualizarMetodo: function actualizarMetodo() {
-      //Verifica que el método 'verificarCategoria' haya devuelto un valor, en ese caso, se muestran los errores al usuario que son arrojados debido a que algun campo obligatorio esta vacio
-      if (this.validarTarea()) {
-        return;
-      }
-
-      var me = this;
-      console.log(this.id); //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/actualizar' para llamar al controlador y ejecutar la tarea correspondiente
-
-      axios.put('/metodoPago/actualizar', {
-        //Se le asignan los valores recopilados de los inputs del modal
-        'nombre_mp': this.nombre_mp,
-        'cantidad_minretiro': this.cantidad_minretiro,
-        'cantidad_maxretiro': this.cantidad_maxretiro,
-        'cargo_retiro': this.cargo_retiro,
-        'porcentaje_cargo': this.porcentaje_cargo,
-        'taza_mp': this.taza_mp,
-        'moneda_mp': this.moneda_mp,
-        'dias_habiles': this.dias_habiles,
-        'id': this.id // 'imagen': this.imagen
-
-      }).then(function (response) {
-        //Se llama al metodo 'cerrarModal' para ocultarlo y se vuelve a enlistar las categorias de forma descendente, es decir, el registro recien ingresado sera el primero
-        me.cerrarModal();
-        me.listarTarea(1, '', 'nombre_mp');
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    selectProyecto: function selectProyecto() {
-      var me = this; //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
-
-      var url = '/usuario/selectHito';
-      axios.get(url).then(function (response) {
-        //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
-        var respuesta = response.data; //Guarda los datos en el arreglo 'arrayRol'
-
-        me.arrayHito = respuesta.hito;
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    //Método que sirve para mostrar en el modal errores cuando el usuario no ingresa texto en el input mediante el uso de un array del apartado de estilos
-    validarTarea: function validarTarea() {
-      this.errorMetodo = 0;
-      this.errorMostrarMsjMetodo = [];
-      /*if (!this.nombre_mp) this.errorMostrarMsjMetodo.push("El nombre del metodo de pago no puede estar vacío.");
-      if (!this.cantidad_minretiro) this.errorMostrarMsjMetodo.push("La cantidad minima de retiro no puede estar vacía.");
-      if (!this.cantidad_maxretiro) this.errorMostrarMsjMetodo.push("La cantidad maxima de retiro no puede estar vacía.");
-      if (!this.cargo_retiro) this.errorMostrarMsjMetodo.push("El cargo de retiro no puede estar vacío.");
-      if (!this.porcentaje_cargo) this.errorMostrarMsjMetodo.push("El porcentaje de retiro no puede estar vacío.");
-      if (!this.taza_mp) this.errorMostrarMsjMetodo.push("La taza no puede estar vacía.");
-      if (!this.moneda_mp) this.errorMostrarMsjMetodo.push("La moneda no puede estar vacía.");
-      if (!this.dias_habiles) this.errorMostrarMsjMetodo.push("Los dias habiles no puede estar vacíos.");*/
-
-      if (this.errorMostrarMsjMetodo.length) this.errorMetodo = 1;
-      return this.errorMetodo;
-    },
-    //Método que sirve para mostrar el modal para guardar/actualizar un proveedor, en este se tiene 2 switch donde se hace uso del modelo correspondiente y la acción, se hace de esta manera debido a que se utiliza el mismo modal para ambas tareas mas sin embargo, los datos que se mandan al controlador son diferentes
-    abrirModal: function abrirModal(modelo, accion) {
-      var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
-      switch (modelo) {
-        case "tarea":
-          {
-            switch (accion) {
-              case 'registrar':
-                {
-                  this.modal = 1;
-                  this.tituloModal = 'Registrar tarea';
-                  this.hito_id = 0;
-                  this.miembro_id = 0;
-                  this.fecha_inicio = 0;
-                  this.horas = 0;
-                  this.descripcion = 0;
-                  this.tipoAccion = 1;
-                  break;
-                }
-
-              case 'actualizar':
-                {
-                  this.modal = 1;
-                  this.tituloModal = 'Actualizar tarea';
-                  this.id = data['id'];
-                  this.nombre_mp = data['nombre_mp'];
-                  this.cantidad_minretiro = data['cantidad_minretiro'];
-                  ;
-                  this.cantidad_maxretiro = data['cantidad_maxretiro'];
-                  ;
-                  this.cargo_retiro = data['cargo_retiro'];
-                  ;
-                  this.porcentaje_cargo = data['porcentaje_cargo'];
-                  ;
-                  this.taza_mp = data['taza_mp'];
-                  ;
-                  this.moneda_mp = data['moneda_mp'];
-                  ;
-                  this.dias_habiles = data['dias_habiles'];
-                  this.tipoAccion = 2;
-                  break;
-                }
-            }
-          }
-      } //this.selectHito();
-
-
-      this.selectProyecto();
-    },
-    //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
-    cerrarModal: function cerrarModal() {
-      this.modal = 0;
-      this.hito_id = 0;
-      this.miembro_id = 0;
-      this.fecha_inicio = 0;
-      this.horas = 0;
-      this.descripcion = 0;
-    },
-    desactivarMetodo: function desactivarMetodo(id) {
+    desactivarTarea: function desactivarTarea(id) {
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -5165,11 +4920,12 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           var me = _this; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
 
-          axios.put('/metodoPago/desactivar', {
+          axios.put('/tarea/desactivar', {
             //Se le asignan los valores recopilados de los inputs del modal
             'id': id
           }).then(function (response) {
             //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
+            console.log(response.data);
             me.listarTarea(1, '', 'nombre_mp');
             swalWithBootstrapButtons.fire('¡Desactivado!', 'El registro ha sido desactivado con éxito.', 'success');
           })["catch"](function (error) {
@@ -7257,70 +7013,107 @@ var render = function() {
                   _c(
                     "tbody",
                     _vm._l(_vm.arrayHito, function(hito) {
-                      return _c("tr", { key: hito.id }, [
-                        _c("td", [
+                      return _c(
+                        "tr",
+                        { key: hito.id },
+                        [
                           _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-warning btn-sm",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.abrirModal(
-                                    "hito",
-                                    "actualizar",
-                                    hito,
-                                    hito.id
-                                  )
-                                }
-                              }
-                            },
-                            [_c("i", { staticClass: "fas fa-pen" })]
+                            "td",
+                            [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-warning btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.abrirModal(
+                                        "hito",
+                                        "actualizar",
+                                        hito,
+                                        hito.id
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fas fa-pen" })]
+                              ),
+                              _vm._v("  \n                                  "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-warning btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.abrirModal(
+                                        "hito",
+                                        "add",
+                                        hito,
+                                        hito.id
+                                      )
+                                    }
+                                  }
+                                },
+                                [_c("i", { staticClass: "fas fa-plus" })]
+                              ),
+                              _vm._v(
+                                "  \n                                   \n                                    "
+                              ),
+                              hito.estado
+                                ? [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-danger btn-sm",
+                                        attrs: { type: "button" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.desactivarHito(hito.id)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("i", {
+                                          staticClass: "far fa-eye-slash"
+                                        })
+                                      ]
+                                    ),
+                                    _vm._v(
+                                      " \n                                "
+                                    )
+                                  ]
+                                : _vm._e()
+                            ],
+                            2
                           ),
-                          _vm._v("  \n                                  "),
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-warning btn-sm",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.abrirModal(
-                                    "hito",
-                                    "add",
-                                    hito,
-                                    hito.id
-                                  )
-                                }
-                              }
-                            },
-                            [_c("i", { staticClass: "fas fa-plus" })]
-                          ),
-                          _vm._v(
-                            "  \n                                   \n                               "
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("td", {
-                          domProps: { textContent: _vm._s(hito.ptitulo) }
-                        }),
-                        _vm._v(" "),
-                        _c("td", {
-                          domProps: { textContent: _vm._s(hito.titulo) }
-                        }),
-                        _vm._v(" "),
-                        _c("td", {
-                          domProps: { textContent: _vm._s(hito.fecha_inicio) }
-                        }),
-                        _vm._v(" "),
-                        _c("td", {
-                          domProps: { textContent: _vm._s(hito.fecha_fin) }
-                        }),
-                        _vm._v(" "),
-                        _c("td", {
-                          domProps: { textContent: _vm._s(hito.descripcion) }
-                        })
-                      ])
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(hito.ptitulo) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(hito.titulo) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(hito.fecha_inicio) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(hito.fecha_fin) }
+                          }),
+                          _vm._v(" "),
+                          _c("td", {
+                            domProps: { textContent: _vm._s(hito.descripcion) }
+                          }),
+                          _vm._v(" "),
+                          hito.estado
+                            ? [_c("td", [_vm._v("Activo")])]
+                            : [_c("td", [_vm._v("Terminado")])]
+                        ],
+                        2
+                      )
                     }),
                     0
                   )
@@ -7993,7 +7786,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Fecha final")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Descripcion")])
+        _c("th", [_vm._v("Descripcion")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Estado")])
       ])
     ])
   },
@@ -12152,26 +11947,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "container-fluid" }, [
         _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [
-            _c("i", { staticClass: "fa fa-credit-card" }),
-            _vm._v("  Tareas;\n                "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-secondary float-right",
-                attrs: { type: "button" },
-                on: {
-                  click: function($event) {
-                    return _vm.abrirModal("tarea", "registrar")
-                  }
-                }
-              },
-              [
-                _c("i", { staticClass: "fa fa-plus" }),
-                _vm._v(" Nuevo\n                ")
-              ]
-            )
-          ]),
+          _vm._m(1),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
             _c("div", { staticClass: "form-group row" }, [
@@ -12206,8 +11982,8 @@ var render = function() {
                       }
                     },
                     [
-                      _c("option", { attrs: { value: "nombre_mp" } }, [
-                        _vm._v("Nombre")
+                      _c("option", { attrs: { value: "descripcion" } }, [
+                        _vm._v("Descripcion")
                       ])
                     ]
                   ),
@@ -12273,30 +12049,66 @@ var render = function() {
               "table",
               { staticClass: "table table-bordered table-striped table-sm" },
               [
-                _vm._m(1),
+                _vm._m(2),
                 _vm._v(" "),
                 _c(
                   "tbody",
                   _vm._l(_vm.arrayTareas, function(tarea) {
-                    return _c("tr", { key: tarea.id }, [
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(tarea.descripcion) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(tarea.titulo) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(tarea.nombre) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(tarea.horas) }
-                      })
-                    ])
+                    return _c(
+                      "tr",
+                      { key: tarea.id },
+                      [
+                        _c(
+                          "td",
+                          [
+                            tarea.estado
+                              ? [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-danger btn-sm",
+                                      attrs: { type: "button" },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.desactivarTarea(tarea.id)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c("i", {
+                                        staticClass: "far fa-eye-slash"
+                                      })
+                                    ]
+                                  ),
+                                  _vm._v(" \n                                ")
+                                ]
+                              : _vm._e()
+                          ],
+                          2
+                        ),
+                        _vm._v(" "),
+                        _c("td", {
+                          domProps: { textContent: _vm._s(tarea.descripcion) }
+                        }),
+                        _vm._v(" "),
+                        _c("td", {
+                          domProps: { textContent: _vm._s(tarea.titulo) }
+                        }),
+                        _vm._v(" "),
+                        _c("td", {
+                          domProps: { textContent: _vm._s(tarea.nombre) }
+                        }),
+                        _vm._v(" "),
+                        _c("td", {
+                          domProps: { textContent: _vm._s(tarea.horas) }
+                        }),
+                        _vm._v(" "),
+                        tarea.estado
+                          ? [_c("td", [_vm._v("Activo")])]
+                          : [_c("td", [_vm._v("Terminado")])]
+                      ],
+                      2
+                    )
                   }),
                   0
                 )
@@ -12387,361 +12199,7 @@ var render = function() {
             ])
           ])
         ])
-      ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "modal fade",
-          class: { mostrar: _vm.modal },
-          staticStyle: {
-            display: "none",
-            "overflow-y": "scroll",
-            "padding-top": "55px"
-          },
-          attrs: {
-            tabindex: "-1",
-            role: "dialog",
-            "aria-labelledby": "myModalLabel",
-            "aria-hidden": "true"
-          }
-        },
-        [
-          _c(
-            "div",
-            {
-              staticClass: "modal-dialog modal-primary modal-lg",
-              attrs: { role: "document" }
-            },
-            [
-              _c("div", { staticClass: "modal-content" }, [
-                _c("div", { staticClass: "modal-header" }, [
-                  _c("h4", {
-                    staticClass: "modal-title",
-                    domProps: { textContent: _vm._s(_vm.tituloModal) }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "close",
-                      attrs: { type: "button", "aria-label": "Close" },
-                      on: {
-                        click: function($event) {
-                          return _vm.cerrarModal()
-                        }
-                      }
-                    },
-                    [
-                      _c("span", { attrs: { "aria-hidden": "true" } }, [
-                        _vm._v("×")
-                      ])
-                    ]
-                  )
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "modal-body" }, [
-                  _c(
-                    "form",
-                    {
-                      staticClass: "form-horizontal",
-                      attrs: {
-                        action: "",
-                        method: "post",
-                        enctype: "multipart/form-data"
-                      }
-                    },
-                    [
-                      _c("div", { staticClass: "form-group row" }, [
-                        _vm._m(2),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c(
-                            "select",
-                            {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.hito_id,
-                                  expression: "hito_id"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              on: {
-                                change: [
-                                  function($event) {
-                                    var $$selectedVal = Array.prototype.filter
-                                      .call($event.target.options, function(o) {
-                                        return o.selected
-                                      })
-                                      .map(function(o) {
-                                        var val =
-                                          "_value" in o ? o._value : o.value
-                                        return val
-                                      })
-                                    _vm.hito_id = $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  },
-                                  function($event) {
-                                    return _vm.selectProgramadorTarea($event)
-                                  }
-                                ]
-                              }
-                            },
-                            [
-                              _c("option", { attrs: { value: "0" } }, [
-                                _vm._v("Seleccione una opción: ")
-                              ]),
-                              _vm._v(" "),
-                              _vm._l(_vm.arrayHito, function(hito) {
-                                return _c("option", {
-                                  key: hito.id,
-                                  attrs: { value: "hito.id" },
-                                  domProps: { textContent: _vm._s(hito.titulo) }
-                                })
-                              })
-                            ],
-                            2
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _vm._m(3),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c(
-                            "select",
-                            {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.miembro_id,
-                                  expression: "miembro_id"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.miembro_id = $event.target.multiple
-                                    ? $$selectedVal
-                                    : $$selectedVal[0]
-                                }
-                              }
-                            },
-                            [
-                              _c("option", { attrs: { value: "0" } }, [
-                                _vm._v("Seleccione una opción: ")
-                              ]),
-                              _vm._v(" "),
-                              _vm._l(_vm.arrayProgramador, function(
-                                programador
-                              ) {
-                                return _c("option", {
-                                  key: programador.id,
-                                  domProps: {
-                                    value: programador.id,
-                                    textContent: _vm._s(programador.nombre)
-                                  }
-                                })
-                              })
-                            ],
-                            2
-                          )
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _vm._m(4),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.fecha_inicio,
-                                expression: "fecha_inicio"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "date",
-                              placeholder: "Ingrese la fecha de inicio",
-                              min: "<?php echo $fecha = date()?>"
-                            },
-                            domProps: { value: _vm.fecha_inicio },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.fecha_inicio = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _vm._m(5),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.horas,
-                                expression: "horas"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              placeholder: "Ingrese horas de trabajo "
-                            },
-                            domProps: { value: _vm.horas },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.horas = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _vm._m(6),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.descripcion,
-                                expression: "descripcion"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              placeholder: "Ingrese la descripcion"
-                            },
-                            domProps: { value: _vm.descripcion },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.descripcion = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: _vm.errorMetodo,
-                              expression: "errorMetodo"
-                            }
-                          ],
-                          staticClass: "form-group row div-error"
-                        },
-                        [
-                          _c(
-                            "div",
-                            { staticClass: "text-center text-error" },
-                            _vm._l(_vm.errorMostrarMsjMetodo, function(error) {
-                              return _c("div", {
-                                key: error,
-                                domProps: { textContent: _vm._s(error) }
-                              })
-                            }),
-                            0
-                          )
-                        ]
-                      )
-                    ]
-                  )
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "modal-footer" }, [
-                  _vm._m(7),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-secondary",
-                      attrs: { type: "button" },
-                      on: {
-                        click: function($event) {
-                          return _vm.cerrarModal()
-                        }
-                      }
-                    },
-                    [_vm._v("Cerrar")]
-                  ),
-                  _vm._v(" "),
-                  _vm.tipoAccion == 1
-                    ? _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-success",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              return _vm.registrarTarea()
-                            }
-                          }
-                        },
-                        [_vm._v("Guardar")]
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.tipoAccion == 2
-                    ? _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-warning",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              return _vm.actualizarMetodo()
-                            }
-                          }
-                        },
-                        [_vm._v("Actualizar")]
-                      )
-                    : _vm._e()
-                ])
-              ])
-            ]
-          )
-        ]
-      )
+      ])
     ]
   )
 }
@@ -12758,6 +12216,15 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("i", { staticClass: "fa fa-credit-card" }),
+      _vm._v("  Tareas;\n                \n            ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
         _c("th", [_vm._v("Opciones")]),
@@ -12768,82 +12235,10 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Programador")]),
         _vm._v(" "),
-        _c("th", [_vm._v("horas")])
+        _c("th", [_vm._v("horas")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Estado")])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
-      [_vm._v("Hito "), _c("b", [_vm._v("(*)")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
-      [_vm._v("Programador "), _c("b", [_vm._v("(*)")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
-      [_vm._v("Fecha inicio"), _c("b", [_vm._v("(*)")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
-      [_vm._v("Horas"), _c("b", [_vm._v("(*)")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      {
-        staticClass: "col-md-3 form-control-label",
-        attrs: { for: "text-input" }
-      },
-      [_vm._v("Descripcion "), _c("b", [_vm._v("(*)")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("span", [
-      _c("b", [_vm._v("(*)")]),
-      _vm._v(" Campo obligatorio de ingresar")
     ])
   }
 ]
