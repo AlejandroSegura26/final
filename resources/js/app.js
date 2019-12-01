@@ -30,7 +30,7 @@ Vue.component('proyectoprogramador-component',require('./components/ProyectosPro
 Vue.component('proyectointegrantes-component',require('./components/ProyectoIntegrantesComponent.vue').default);
 Vue.component('proyectotodos-component',require('./components/ProyectoTodosComponent.vue').default);
 Vue.component('hitos-component',require('./components/HitosComponent.vue').default);
-Vue.component('tareas-component',require('./components/TareasPagoComponent.vue').default);
+Vue.component('tareas-component',require('./components/TareasComponent.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

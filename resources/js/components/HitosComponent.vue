@@ -14,9 +14,9 @@
                     <button type="button" @click="abrirModal('hito','registrar',0)" class="btn btn-secondary float-right">
                         <i class="fa fa-plus"></i>&nbsp;Nuevo
                     </button>
-                     <!--<button type="button" @click="menu=15" class="btn btn-secondary float-right">
-                        <i class="fa fa-plus"></i>&nbsp;Ver Programadores Todos Los proyectos
-                    </button>-->
+                     < <button type="button" @click="menu=15" class="btn btn-secondary float-right">
+                        <i class="fa fa-plus"></i>&nbsp;Ver todas las tareas
+                    </button> 
                 </div>
                 <div class="card-body">
                     <div class="form-group row">
@@ -49,6 +49,10 @@
                                       <button type="button" @click="abrirModal('hito','actualizar',hito,hito.id)" class="btn btn-warning btn-sm">
                                         <i class="fas fa-pen"></i>
                                     </button> &nbsp;
+                                      <button type="button" @click="abrirModal('hito','add',hito,hito.id)" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-plus"></i>
+                                    </button> &nbsp;
+                                       
                                    <!--  <template v-if="proyecto.estado == 'inicializado'">
                                   
                                     <button type="button" @click="abrirModal('hito','add',hito,hito.id)" class="btn btn-warning btn-sm">
@@ -88,7 +92,7 @@
             <!-- Fin de Listado Usuarios -->
 
             <template style="margin-top:10px;" v-if="menu==15">
-                <proyectotodos-component></proyectotodos-component>
+                <tareas-component></tareas-component>
             </template>
 
 
@@ -156,44 +160,47 @@
                         </form>
 
                          <form v-else action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Rol</label>
+                            
+                  
+                             <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Programador <b>(*)</b></label>
                                 <div class="col-md-9">
-                                    <input type="text" v-model="rol" class="form-control"
-                                        placeholder="Ingrese el Rol del programador">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Programador</label>
-                                <div class="col-md-9">
-                                   <select class="form-control" v-model="id_programador">
+                                    <select class="form-control" v-model="miembro_id">
                                         <option value="0">Seleccione una opción: </option>
-                                        <option v-for="programador in arrayProgramador" :key="programador.id" :value="programador.id" v-text="programador.nombre">
-                                        </option>
+                                        <option v-for="programador in arrayProgramador" :key="programador.id" :value="programador.id" v-text="programador.nombre"></option>
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">tipo pago</label>
+                          
+                             <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Fecha inicio<b>(*)</b></label>
                                 <div class="col-md-9">
-                                   <select class="form-control col-md-3" v-model="tipo_pago">
-                                    <option value="SEMANAL">SEMANAL</option>
-                                    <option value="HORA">POR HORA</option>
-                                    <option value="QUINCENA">QUINCENA</option>
-                                </select>
+
+                                    <input type="date" v-model="fecha_inicio" class="form-control"
+                                        placeholder="Ingrese la fecha de inicio" min="<?php echo $fecha = date()?>" >
+
                                 </div>
                             </div>
+                            
+                             
+                          
+                              <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Horas<b>(*)</b></label>
+                                <div class="col-md-9">
+                                    <input type="text" v-model="horas" class="form-control"
+                                        placeholder="Ingrese horas de trabajo ">
+                                </div>
+                            </div>
+                          
+                  
+                          
                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Cantidad</label>
+                                <label class="col-md-3 form-control-label" for="text-input">Descripcion <b>(*)</b></label>
                                 <div class="col-md-9">
-                                    <input type="number" step="any" v-model="cantidad" min="0" class="form-control"
-                                        placeholder="Ingrese la cantidad de pago">
+                                    <input type="text" v-model="descripcion" class="form-control"
+                                        placeholder="Ingrese la descripcion">
                                 </div>
-
                             </div>
-
-
                             <div v-show="errorProyecto" class="form-group row div-error">
                                 <div class="text-center text-error">
                                     <div v-for="error in errorMostrarMsjProyecto" :key="error" v-text="error"></div>
@@ -206,7 +213,7 @@
                         <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
                         <button type="button" v-if="tipoAccion==1" class="btn btn-success" @click="registrarHito()">Guardar</button>
                         <button type="button" v-if="tipoAccion==2" class="btn btn-warning" @click="actualizarHito()">Actualizar</button>
-                        <button type="button" v-if="tipoAccion==3" class="btn btn-success" @click="miembrosProyecto()">Agregar</button>
+                        <button type="button" v-if="tipoAccion==3" class="btn btn-success" @click="agregarTarea()">Agregar</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -226,6 +233,8 @@
                 id_hito: 0,
                 titulo: '',
                 menu:0,
+              miembro_id:0,
+              horas:0,
                 id_manager:0,
                 descripcion: '',
                 fecha_inicio: '',
@@ -336,15 +345,17 @@
                     console.log(error);
                 });
             },
-            selectProyecto() {
-                let me = this;
-                //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
-                var url = '/usuario/selectProyecto';
+            selectProyecto(page) {
+                 let me = this;
+                //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
+                var url = '/usuario/selectManager?page=' + page ;
                 axios.get(url).then(function (response) {
                     //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
                     var respuesta = response.data;
-                    //Guarda los datos en el arreglo 'arrayRol'
-                    me.arrayProyecto  = respuesta.proyecto;
+                    //Guarda los datos en el arreglo 'arrayUsuario'
+                    me.arrayProgramador  = respuesta.programadorAASSSSS;
+                    //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
+ 
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -409,6 +420,7 @@
                     console.log(error);
                 });
             },
+            
             //Método que sirve para mostrar en el modal errores cuando el usuario no ingresa texto en el input mediante el uso de un array del apartado de estilos
             validarHito() {
                 this.errorProyecto = 0;
@@ -454,15 +466,14 @@
                              case 'add':
                             {
                                 this.modal = 1;
-                                this.id = id;
-                                this.tituloModal = 'Registrar miembros de proyecto';
-                                this.tipoAccion = 3;
-
-                                this.rol = '';
-                                this.tipo_pago ='';
-                                this.cantidad = 0;
-                                this.id_programador = 0;
-
+                                this.tituloModal = 'Registrar tarea';
+                                this.hito_id=id;
+                                this.miembro_id=0;
+                                this.fecha_inicio=0;
+                                this.horas=0;
+                                this.descripcion=0;
+                              this.tipoAccion = 3;
+                                this.selectProgramador(id);
                                 break;
                             }
                         }
@@ -471,7 +482,7 @@
                 //this.selectCliente();
                // this.selectManager();
                 this.selectProyecto();
-                //this.selectProgramador();
+             
             },
             //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
             cerrarModal() {
@@ -533,7 +544,7 @@
                 })
             },
             //Método para desactivar un usuario y no pueda acceder al sistema
-            miembrosProyecto() {
+            agregarTarea() {
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',
@@ -542,7 +553,7 @@
                     buttonsStyling: false
                 })
                 swalWithBootstrapButtons.fire({
-                    title: '¿Estás seguro de  agregar a este programador al proyecto?     ',
+                    title: '¿Estás seguro de  agregar esta tarea?     ',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Aceptar',
@@ -552,15 +563,15 @@
                     if (result.value) {
                         let me = this;
                         //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
-                        axios.post('/miembrosProyecto/agregar',{
+                        axios.post('/tarea/registrar',{
                             //Se le asignan los valores recopilados de los inputs del modal
 
-                            'id_proyecto':this.id,
-                            'tipo_pago':this.tipo_pago,
-                            'cantidad':this.cantidad,
-                            'id_usuario':this.id_programador,
-                            'rol_proyecto':this.rol
-
+                            'hito_id':this.hito_id,
+                            'miembro_id':this.miembro_id,
+                            'fecha_inicio':this.fecha_inicio,
+                            'horas':this.horas,
+                            'descripcion':this.descripcion,
+                          
 
                         }).then(function (response) {
 
@@ -580,15 +591,17 @@
                     }
                 })
             },
-            selectProgramador(){
+            selectProgramador(id){
+           
                let me = this;
-                //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
-                var url = '/usuario/selectProgramador';
+                //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
+                var url = '/usuario/selectProgramadorTarea?id=' + id;
                 axios.get(url).then(function (response) {
                     //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
                     var respuesta = response.data;
-                    //Guarda los datos en el arreglo 'arrayRol'
+                    //Guarda los datos en el arreglo 'arrayUsuario'
                     me.arrayProgramador = respuesta.programador;
+ 
                 })
                 .catch(function (error) {
                     console.log(error);

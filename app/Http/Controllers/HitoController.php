@@ -67,4 +67,16 @@ class HitoController extends Controller
             $hito -> descripcion = $request -> descripcion;
             $hito -> save();
        }
+  
+     public function selectHito(Request $request)
+    {
+        //Verifica que solo existan peticiones por Ajax, en caso de acceder a una ruta dirigira a la raiz
+         if (!$request->ajax()) return redirect('/');
+        //Verifica que traiga solo los roles que estan activas y las ordena ascendentemente para guardalas en el arreglo 'roles'
+        $hito =Hito::join('proyecto AS p','p.id','=','hitos.id_proyecto')->join('usuarios AS u','u.id','=','p.id_manager')
+            ->select('hitos.id','hitos.titulo')
+            ->where('p.id_manager','=',Auth::user()->id)
+            ->orderBy('hitos.id','desc')->get();
+        return ['hito' => $hito];
+    }
 }

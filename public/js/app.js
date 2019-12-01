@@ -2056,6 +2056,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   //Propiedad 'data' de javascript donde se declaran las variables necesarias para el funcionamiento del modulo 'categorias', dentro de estas variables tenemos las encargadas de la paginacion, del crud, de la busqueda de registros y del activado y desactivado de la cliente
   data: function data() {
@@ -2064,6 +2072,8 @@ __webpack_require__.r(__webpack_exports__);
       id_hito: 0,
       titulo: '',
       menu: 0,
+      miembro_id: 0,
+      horas: 0,
       id_manager: 0,
       descripcion: '',
       fecha_inicio: '',
@@ -2177,15 +2187,15 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    selectProyecto: function selectProyecto() {
-      var me = this; //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
+    selectProyecto: function selectProyecto(page) {
+      var me = this; //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
 
-      var url = '/usuario/selectProyecto';
+      var url = '/usuario/selectManager?page=' + page;
       axios.get(url).then(function (response) {
         //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
-        var respuesta = response.data; //Guarda los datos en el arreglo 'arrayRol'
+        var respuesta = response.data; //Guarda los datos en el arreglo 'arrayUsuario'
 
-        me.arrayProyecto = respuesta.proyecto;
+        me.arrayProgramador = respuesta.programadorAASSSSS; //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2297,13 +2307,14 @@ __webpack_require__.r(__webpack_exports__);
               case 'add':
                 {
                   this.modal = 1;
-                  this.id = id;
-                  this.tituloModal = 'Registrar miembros de proyecto';
+                  this.tituloModal = 'Registrar tarea';
+                  this.hito_id = id;
+                  this.miembro_id = 0;
+                  this.fecha_inicio = 0;
+                  this.horas = 0;
+                  this.descripcion = 0;
                   this.tipoAccion = 3;
-                  this.rol = '';
-                  this.tipo_pago = '';
-                  this.cantidad = 0;
-                  this.id_programador = 0;
+                  this.selectProgramador(id);
                   break;
                 }
             }
@@ -2312,7 +2323,7 @@ __webpack_require__.r(__webpack_exports__);
       // this.selectManager();
 
 
-      this.selectProyecto(); //this.selectProgramador();
+      this.selectProyecto();
     },
     //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
     cerrarModal: function cerrarModal() {
@@ -2369,7 +2380,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     //Método para desactivar un usuario y no pueda acceder al sistema
-    miembrosProyecto: function miembrosProyecto() {
+    agregarTarea: function agregarTarea() {
       var _this2 = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -2380,7 +2391,7 @@ __webpack_require__.r(__webpack_exports__);
         buttonsStyling: false
       });
       swalWithBootstrapButtons.fire({
-        title: '¿Estás seguro de  agregar a este programador al proyecto?     ',
+        title: '¿Estás seguro de  agregar esta tarea?     ',
         type: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Aceptar',
@@ -2390,13 +2401,13 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           var me = _this2; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/desactivar' para llamar al controlador y ejecutar la tarea correspondiente
 
-          axios.post('/miembrosProyecto/agregar', {
+          axios.post('/tarea/registrar', {
             //Se le asignan los valores recopilados de los inputs del modal
-            'id_proyecto': _this2.id,
-            'tipo_pago': _this2.tipo_pago,
-            'cantidad': _this2.cantidad,
-            'id_usuario': _this2.id_programador,
-            'rol_proyecto': _this2.rol
+            'hito_id': _this2.hito_id,
+            'miembro_id': _this2.miembro_id,
+            'fecha_inicio': _this2.fecha_inicio,
+            'horas': _this2.horas,
+            'descripcion': _this2.descripcion
           }).then(function (response) {
             swalWithBootstrapButtons.fire('¡Agregado!', 'El programador ha sido agregado con éxito.', 'success');
           })["catch"](function (error) {
@@ -2407,13 +2418,13 @@ __webpack_require__.r(__webpack_exports__);
         result.dismiss === Swal.DismissReason.cancel) {}
       });
     },
-    selectProgramador: function selectProgramador() {
-      var me = this; //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
+    selectProgramador: function selectProgramador(id) {
+      var me = this; //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
 
-      var url = '/usuario/selectProgramador';
+      var url = '/usuario/selectProgramadorTarea?id=' + id;
       axios.get(url).then(function (response) {
         //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
-        var respuesta = response.data; //Guarda los datos en el arreglo 'arrayRol'
+        var respuesta = response.data; //Guarda los datos en el arreglo 'arrayUsuario'
 
         me.arrayProgramador = respuesta.programador;
       })["catch"](function (error) {
@@ -4698,58 +4709,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasPagoComponent.vue?vue&type=script&lang=js&":
-/*!******************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TareasPagoComponent.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasComponent.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TareasComponent.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -4916,6 +4884,11 @@ __webpack_require__.r(__webpack_exports__);
       nombre_mp: '',
       //    imagen:'',
       //   imagenMiniatura:'',
+      hito_id: 0,
+      miembro_id: 0,
+      fecha_inicio: 0,
+      horas: 0,
+      descripcion: '',
       cantidad_minretiro: 0,
       cantidad_maxretiro: 0,
       cargo_retiro: 0,
@@ -4923,7 +4896,10 @@ __webpack_require__.r(__webpack_exports__);
       taza_mp: 0,
       moneda_mp: '',
       dias_habiles: 0,
+      arrayHito: [],
+      arrayTareas: [],
       arrayMetodo: [],
+      arrayProgramador: [],
       arrayRol: [],
       modal: 0,
       tituloModal: '',
@@ -5001,15 +4977,15 @@ __webpack_require__.r(__webpack_exports__);
          reader.readAsDataURL(file);
      },*/
     //Metodo para obtener todos los registros de la bd mediante el uso del controlador definido y en este caso, se tiene tambien la implementacion de la paginacion para ver los registros de acuerdo a lo establecido en el modelo (10 modelos por pagina) y se implementa la busqueda de registros en este metodo debido a que es el que se encarga de mostrar los datos de acuerdo al criterio elegido si es que se ha introducido un texto o mostrar todos los datos en caso de que no sea asi
-    listarMetodo: function listarMetodo(page, buscar, criterio) {
+    listarTarea: function listarTarea(page, buscar, criterio) {
       var me = this; //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
 
-      var url = '/metodoPago?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
+      var url = '/tarea?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
       axios.get(url).then(function (response) {
         //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
         var respuesta = response.data; //Guarda los datos en el arreglo 'arrayUsuario'
 
-        me.arrayMetodo = respuesta.metodo.data; //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
+        me.arrayTareas = respuesta.tareas.data; //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
 
         me.pagination = respuesta.pagination;
       })["catch"](function (error) {
@@ -5022,33 +4998,30 @@ __webpack_require__.r(__webpack_exports__);
 
       me.pagination.current_page = page; //Envia la peticion para visualizar los datos de esa pagina
 
-      me.listarMetodo(page, buscar, criterio);
+      me.listarTarea(page, buscar, criterio);
     },
     //Método para registrar una categoria a la base de datos
-    registrarMetodo: function registrarMetodo() {
+    registrarTarea: function registrarTarea() {
       //Verifica que el método 'verificarCategoria' haya devuelto un valor, en ese caso, no se realiza ninguna tarea hasta que esto no sea cierto
-      if (this.validarMetodo()) {
+      if (this.validarTarea()) {
         return;
       }
 
       var me = this; //Mediante axios se hace una peticion mediante ajax gracias a la ruta '/categoria/registrar' para llamar al controlador y ejecutar la tarea correspondiente
 
-      axios.post('/metodoPago/registrar', {
+      axios.post('/tarea/registrar', {
         //Se le asignan los valores recopilados de los inputs del modal
         //  'imagen_mp': this.imagen_mp,
-        'nombre_mp': this.nombre_mp,
-        'cantidad_minretiro': this.cantidad_minretiro,
-        'cantidad_maxretiro': this.cantidad_maxretiro,
-        'cargo_retiro': this.cargo_retiro,
-        'porcentaje_cargo': this.porcentaje_cargo,
-        'taza_mp': this.taza_mp,
-        'moneda_mp': this.moneda_mp,
-        'dias_habiles': this.dias_habiles // 'imagen': this.imagen
+        'hito_id': this.hito_id,
+        'miembro_id': this.miembro_id,
+        'fecha_inicio': this.fecha_inicio,
+        'horas': this.horas,
+        'descripcion': this.descripcion // 'imagen': this.imagen
 
       }).then(function (response) {
         //Se llama al metodo 'cerrarModal' para ocultarlo y se vuelve a enlistar las categorias de forma descendente, es decir, el registro recien ingresado sera el primero
         me.cerrarModal();
-        me.listarMetodo(1, '', 'nombre_mp');
+        me.listarTarea(1, '', 'nombre_mp');
       })["catch"](function (error) {
         console.log(error);
       });
@@ -5056,7 +5029,7 @@ __webpack_require__.r(__webpack_exports__);
     //Método para actualizar un registro de la tabla 'persona'
     actualizarMetodo: function actualizarMetodo() {
       //Verifica que el método 'verificarCategoria' haya devuelto un valor, en ese caso, se muestran los errores al usuario que son arrojados debido a que algun campo obligatorio esta vacio
-      if (this.validarMetodo()) {
+      if (this.validarTarea()) {
         return;
       }
 
@@ -5078,23 +5051,37 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         //Se llama al metodo 'cerrarModal' para ocultarlo y se vuelve a enlistar las categorias de forma descendente, es decir, el registro recien ingresado sera el primero
         me.cerrarModal();
-        me.listarMetodo(1, '', 'nombre_mp');
+        me.listarTarea(1, '', 'nombre_mp');
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    selectProyecto: function selectProyecto() {
+      var me = this; //Se le asigna la ruta al controlador que realiza la peticion al modelo para recopilar todos los roles
+
+      var url = '/usuario/selectHito';
+      axios.get(url).then(function (response) {
+        //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
+        var respuesta = response.data; //Guarda los datos en el arreglo 'arrayRol'
+
+        me.arrayHito = respuesta.hito;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     //Método que sirve para mostrar en el modal errores cuando el usuario no ingresa texto en el input mediante el uso de un array del apartado de estilos
-    validarMetodo: function validarMetodo() {
+    validarTarea: function validarTarea() {
       this.errorMetodo = 0;
       this.errorMostrarMsjMetodo = [];
-      if (!this.nombre_mp) this.errorMostrarMsjMetodo.push("El nombre del metodo de pago no puede estar vacío.");
+      /*if (!this.nombre_mp) this.errorMostrarMsjMetodo.push("El nombre del metodo de pago no puede estar vacío.");
       if (!this.cantidad_minretiro) this.errorMostrarMsjMetodo.push("La cantidad minima de retiro no puede estar vacía.");
       if (!this.cantidad_maxretiro) this.errorMostrarMsjMetodo.push("La cantidad maxima de retiro no puede estar vacía.");
       if (!this.cargo_retiro) this.errorMostrarMsjMetodo.push("El cargo de retiro no puede estar vacío.");
       if (!this.porcentaje_cargo) this.errorMostrarMsjMetodo.push("El porcentaje de retiro no puede estar vacío.");
       if (!this.taza_mp) this.errorMostrarMsjMetodo.push("La taza no puede estar vacía.");
       if (!this.moneda_mp) this.errorMostrarMsjMetodo.push("La moneda no puede estar vacía.");
-      if (!this.dias_habiles) this.errorMostrarMsjMetodo.push("Los dias habiles no puede estar vacíos.");
+      if (!this.dias_habiles) this.errorMostrarMsjMetodo.push("Los dias habiles no puede estar vacíos.");*/
+
       if (this.errorMostrarMsjMetodo.length) this.errorMetodo = 1;
       return this.errorMetodo;
     },
@@ -5103,21 +5090,18 @@ __webpack_require__.r(__webpack_exports__);
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
 
       switch (modelo) {
-        case "metodo":
+        case "tarea":
           {
             switch (accion) {
               case 'registrar':
                 {
                   this.modal = 1;
-                  this.tituloModal = 'Registrar metodo de pago';
-                  this.nombre_mp = "";
-                  this.cantidad_minretiro = 0;
-                  this.cantidad_maxretiro = 0;
-                  this.cargo_retiro = 0;
-                  this.porcentaje_cargo = 0;
-                  this.taza_mp = 0;
-                  this.moneda_mp = "";
-                  this.dias_habiles = 0;
+                  this.tituloModal = 'Registrar tarea';
+                  this.hito_id = 0;
+                  this.miembro_id = 0;
+                  this.fecha_inicio = 0;
+                  this.horas = 0;
+                  this.descripcion = 0;
                   this.tipoAccion = 1;
                   break;
                 }
@@ -5125,6 +5109,7 @@ __webpack_require__.r(__webpack_exports__);
               case 'actualizar':
                 {
                   this.modal = 1;
+                  this.tituloModal = 'Actualizar tarea';
                   this.id = data['id'];
                   this.nombre_mp = data['nombre_mp'];
                   this.cantidad_minretiro = data['cantidad_minretiro'];
@@ -5145,21 +5130,19 @@ __webpack_require__.r(__webpack_exports__);
                 }
             }
           }
-      } // this.selectRol();
+      } //this.selectHito();
 
+
+      this.selectProyecto();
     },
     //Método que sirve para ocultar el modal una vez se pulsa sobre alguno de los 2 botones para cerrarlo
     cerrarModal: function cerrarModal() {
-      this.modal = 0; //   this.imagen_mp,
-
-      this.nombre_mp = "";
-      this.cantidad_minretiro = 0;
-      this.cantidad_maxretiro = 0;
-      this.cargo_retiro = 0;
-      this.porcentaje_cargo = 0;
-      this.taza_mp = 0;
-      this.moneda_mp = "";
-      this.dias_habiles = 0;
+      this.modal = 0;
+      this.hito_id = 0;
+      this.miembro_id = 0;
+      this.fecha_inicio = 0;
+      this.horas = 0;
+      this.descripcion = 0;
     },
     desactivarMetodo: function desactivarMetodo(id) {
       var _this = this;
@@ -5187,7 +5170,7 @@ __webpack_require__.r(__webpack_exports__);
             'id': id
           }).then(function (response) {
             //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
-            me.listarMetodo(1, '', 'nombre_mp');
+            me.listarTarea(1, '', 'nombre_mp');
             swalWithBootstrapButtons.fire('¡Desactivado!', 'El registro ha sido desactivado con éxito.', 'success');
           })["catch"](function (error) {
             console.log(error);
@@ -5223,7 +5206,7 @@ __webpack_require__.r(__webpack_exports__);
             'id': id
           }).then(function (response) {
             //Se llama al metodo para enlistar las categorias y se muestra un mensaje mediante sweetalert
-            me.listarMetodo(1, '', 'nombre_mp');
+            me.listarTarea(1, '', 'nombre_mp');
             swalWithBootstrapButtons.fire('¡Activado!', 'El registro ha sido activado con éxito.', 'success');
           })["catch"](function (error) {
             console.log(error);
@@ -5236,7 +5219,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   //Se utiliza la propiedad 'mounted' para hacer el llamado a los métodos que se quieren cargar automaticamente una vez se muestra el componente 'usuario'
   mounted: function mounted() {
-    this.listarMetodo(1, this.buscar, this.criterio);
+    this.listarTarea(1, this.buscar, this.criterio);
   }
 });
 
@@ -5780,10 +5763,10 @@ exports.push([module.i, "\n.modal-content{\n    width: 100% !important;\n    pos
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css&":
-/*!*************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--5-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css& ***!
-  \*************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css&":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--5-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6440,15 +6423,15 @@ if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css&":
-/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--5-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css& ***!
-  \*****************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css&":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--5-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--5-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--5-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--5-2!../../../node_modules/vue-loader/lib??vue-loader-options!./TareasPagoComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css&");
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--5-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--5-2!../../../node_modules/vue-loader/lib??vue-loader-options!./TareasComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css&");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -7107,6 +7090,10 @@ var render = function() {
         _vm._m(0),
         _vm._v(" "),
         _c("li", { staticClass: "breadcrumb-item" }, [
+          _vm._v("Director de proyectos")
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "breadcrumb-item" }, [
           _c(
             "a",
             {
@@ -7119,10 +7106,6 @@ var render = function() {
             },
             [_vm._v("Hitos")]
           )
-        ]),
-        _vm._v(" "),
-        _c("li", { staticClass: "breadcrumb-item" }, [
-          _vm._v("Director de proyectos")
         ])
       ]),
       _vm._v(" "),
@@ -7148,6 +7131,23 @@ var render = function() {
                 [
                   _c("i", { staticClass: "fa fa-plus" }),
                   _vm._v(" Nuevo\n                ")
+                ]
+              ),
+              _vm._v("\n                 < "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary float-right",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function($event) {
+                      _vm.menu = 15
+                    }
+                  }
+                },
+                [
+                  _c("i", { staticClass: "fa fa-plus" }),
+                  _vm._v(" Ver todas las tareas\n                ")
                 ]
               )
             ]),
@@ -7277,7 +7277,28 @@ var render = function() {
                             },
                             [_c("i", { staticClass: "fas fa-pen" })]
                           ),
-                          _vm._v("  \n                               ")
+                          _vm._v("  \n                                  "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-warning btn-sm",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.abrirModal(
+                                    "hito",
+                                    "add",
+                                    hito,
+                                    hito.id
+                                  )
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-plus" })]
+                          ),
+                          _vm._v(
+                            "  \n                                   \n                               "
+                          )
                         ]),
                         _vm._v(" "),
                         _c("td", {
@@ -7391,7 +7412,7 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _vm.menu == 15 ? [_c("proyectotodos-component")] : _vm._e()
+          _vm.menu == 15 ? [_c("tareas-component")] : _vm._e()
         ],
         2
       ),
@@ -7691,52 +7712,7 @@ var render = function() {
                         },
                         [
                           _c("div", { staticClass: "form-group row" }, [
-                            _c(
-                              "label",
-                              {
-                                staticClass: "col-md-3 form-control-label",
-                                attrs: { for: "text-input" }
-                              },
-                              [_vm._v("Rol")]
-                            ),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "col-md-9" }, [
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.rol,
-                                    expression: "rol"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                attrs: {
-                                  type: "text",
-                                  placeholder: "Ingrese el Rol del programador"
-                                },
-                                domProps: { value: _vm.rol },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
-                                    }
-                                    _vm.rol = $event.target.value
-                                  }
-                                }
-                              })
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-group row" }, [
-                            _c(
-                              "label",
-                              {
-                                staticClass: "col-md-3 form-control-label",
-                                attrs: { for: "text-input" }
-                              },
-                              [_vm._v("Programador")]
-                            ),
+                            _vm._m(6),
                             _vm._v(" "),
                             _c("div", { staticClass: "col-md-9" }, [
                               _c(
@@ -7746,8 +7722,8 @@ var render = function() {
                                     {
                                       name: "model",
                                       rawName: "v-model",
-                                      value: _vm.id_programador,
-                                      expression: "id_programador"
+                                      value: _vm.miembro_id,
+                                      expression: "miembro_id"
                                     }
                                   ],
                                   staticClass: "form-control",
@@ -7764,8 +7740,7 @@ var render = function() {
                                             "_value" in o ? o._value : o.value
                                           return val
                                         })
-                                      _vm.id_programador = $event.target
-                                        .multiple
+                                      _vm.miembro_id = $event.target.multiple
                                         ? $$selectedVal
                                         : $$selectedVal[0]
                                     }
@@ -7794,77 +7769,7 @@ var render = function() {
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group row" }, [
-                            _c(
-                              "label",
-                              {
-                                staticClass: "col-md-3 form-control-label",
-                                attrs: { for: "text-input" }
-                              },
-                              [_vm._v("tipo pago")]
-                            ),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "col-md-9" }, [
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.tipo_pago,
-                                      expression: "tipo_pago"
-                                    }
-                                  ],
-                                  staticClass: "form-control col-md-3",
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.tipo_pago = $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    }
-                                  }
-                                },
-                                [
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "SEMANAL" } },
-                                    [_vm._v("SEMANAL")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("option", { attrs: { value: "HORA" } }, [
-                                    _vm._v("POR HORA")
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "option",
-                                    { attrs: { value: "QUINCENA" } },
-                                    [_vm._v("QUINCENA")]
-                                  )
-                                ]
-                              )
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-group row" }, [
-                            _c(
-                              "label",
-                              {
-                                staticClass: "col-md-3 form-control-label",
-                                attrs: { for: "text-input" }
-                              },
-                              [_vm._v("Cantidad")]
-                            ),
+                            _vm._m(7),
                             _vm._v(" "),
                             _c("div", { staticClass: "col-md-9" }, [
                               _c("input", {
@@ -7872,24 +7777,85 @@ var render = function() {
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: _vm.cantidad,
-                                    expression: "cantidad"
+                                    value: _vm.fecha_inicio,
+                                    expression: "fecha_inicio"
                                   }
                                 ],
                                 staticClass: "form-control",
                                 attrs: {
-                                  type: "number",
-                                  step: "any",
-                                  min: "0",
-                                  placeholder: "Ingrese la cantidad de pago"
+                                  type: "date",
+                                  placeholder: "Ingrese la fecha de inicio",
+                                  min: "<?php echo $fecha = date()?>"
                                 },
-                                domProps: { value: _vm.cantidad },
+                                domProps: { value: _vm.fecha_inicio },
                                 on: {
                                   input: function($event) {
                                     if ($event.target.composing) {
                                       return
                                     }
-                                    _vm.cantidad = $event.target.value
+                                    _vm.fecha_inicio = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _vm._m(8),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-9" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.horas,
+                                    expression: "horas"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "text",
+                                  placeholder: "Ingrese horas de trabajo "
+                                },
+                                domProps: { value: _vm.horas },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.horas = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group row" }, [
+                            _vm._m(9),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-9" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.descripcion,
+                                    expression: "descripcion"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "text",
+                                  placeholder: "Ingrese la descripcion"
+                                },
+                                domProps: { value: _vm.descripcion },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.descripcion = $event.target.value
                                   }
                                 }
                               })
@@ -7930,7 +7896,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-footer" }, [
-                  _vm._m(6),
+                  _vm._m(10),
                   _vm._v(" "),
                   _c(
                     "button",
@@ -7986,7 +7952,7 @@ var render = function() {
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
-                              return _vm.miembrosProyecto()
+                              return _vm.agregarTarea()
                             }
                           }
                         },
@@ -8068,6 +8034,58 @@ var staticRenderFns = [
         attrs: { for: "text-input" }
       },
       [_vm._v("Fecha Final"), _c("b", [_vm._v("(*)")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Descripcion "), _c("b", [_vm._v("(*)")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Programador "), _c("b", [_vm._v("(*)")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Fecha inicio"), _c("b", [_vm._v("(*)")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Horas"), _c("b", [_vm._v("(*)")])]
     )
   },
   function() {
@@ -12092,10 +12110,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasPagoComponent.vue?vue&type=template&id=fe83a252&":
-/*!**********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TareasPagoComponent.vue?vue&type=template&id=fe83a252& ***!
-  \**********************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasComponent.vue?vue&type=template&id=5e3ac670&":
+/*!******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TareasComponent.vue?vue&type=template&id=5e3ac670& ***!
+  \******************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -12111,13 +12129,32 @@ var render = function() {
     "main",
     { staticClass: "main", staticStyle: { width: "100%", height: "100%" } },
     [
-      _vm._m(0),
+      _c("ol", { staticClass: "breadcrumb col-lg-12" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c("li", { staticClass: "breadcrumb-item" }, [
+          _c(
+            "a",
+            {
+              attrs: { href: "#" },
+              on: {
+                click: function($event) {
+                  _vm.menu = 5
+                }
+              }
+            },
+            [_vm._v("Director de proyectos")]
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "breadcrumb-item" }, [_vm._v("Tareas")])
+      ]),
       _vm._v(" "),
       _c("div", { staticClass: "container-fluid" }, [
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-header" }, [
             _c("i", { staticClass: "fa fa-credit-card" }),
-            _vm._v("  Métodos de Pago \n                "),
+            _vm._v("  Tareas;\n                "),
             _c(
               "button",
               {
@@ -12125,7 +12162,7 @@ var render = function() {
                 attrs: { type: "button" },
                 on: {
                   click: function($event) {
-                    return _vm.abrirModal("metodo", "registrar")
+                    return _vm.abrirModal("tarea", "registrar")
                   }
                 }
               },
@@ -12201,7 +12238,7 @@ var render = function() {
                         ) {
                           return null
                         }
-                        return _vm.listarMetodo(1, _vm.buscar, _vm.criterio)
+                        return _vm.listarTarea(1, _vm.buscar, _vm.criterio)
                       },
                       input: function($event) {
                         if ($event.target.composing) {
@@ -12219,7 +12256,7 @@ var render = function() {
                       attrs: { type: "submit" },
                       on: {
                         click: function($event) {
-                          return _vm.listarMetodo(1, _vm.buscar, _vm.criterio)
+                          return _vm.listarTarea(1, _vm.buscar, _vm.criterio)
                         }
                       }
                     },
@@ -12240,104 +12277,24 @@ var render = function() {
                 _vm._v(" "),
                 _c(
                   "tbody",
-                  _vm._l(_vm.arrayMetodo, function(metodo) {
-                    return _c("tr", { key: metodo.id }, [
-                      _c(
-                        "td",
-                        [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-warning btn-sm",
-                              attrs: { type: "button" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.abrirModal(
-                                    "metodo",
-                                    "actualizar",
-                                    metodo
-                                  )
-                                }
-                              }
-                            },
-                            [_c("i", { staticClass: "fas fa-pen" })]
-                          ),
-                          _vm._v("  \n                                "),
-                          metodo.estado_mp
-                            ? [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-danger btn-sm",
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.desactivarMetodo(metodo.id)
-                                      }
-                                    }
-                                  },
-                                  [_c("i", { staticClass: "far fa-eye-slash" })]
-                                )
-                              ]
-                            : [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-info btn-sm",
-                                    attrs: { type: "button" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.activarMetodo(metodo.id)
-                                      }
-                                    }
-                                  },
-                                  [_c("i", { staticClass: "far fa-eye" })]
-                                )
-                              ]
-                        ],
-                        2
-                      ),
+                  _vm._l(_vm.arrayTareas, function(tarea) {
+                    return _c("tr", { key: tarea.id }, [
+                      _c("td"),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: { textContent: _vm._s(metodo.nombre_mp) }
+                        domProps: { textContent: _vm._s(tarea.descripcion) }
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: {
-                          textContent: _vm._s(metodo.cantidad_minretiro)
-                        }
+                        domProps: { textContent: _vm._s(tarea.titulo) }
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: {
-                          textContent: _vm._s(metodo.cantidad_maxretiro)
-                        }
+                        domProps: { textContent: _vm._s(tarea.nombre) }
                       }),
                       _vm._v(" "),
                       _c("td", {
-                        domProps: { textContent: _vm._s(metodo.cargo_retiro) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: {
-                          textContent: _vm._s(metodo.porcentaje_cargo)
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(metodo.taza_mp) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(metodo.moneda_mp) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(metodo.dias_habiles) }
-                      }),
-                      _vm._v(" "),
-                      _c("td", {
-                        domProps: { textContent: _vm._s(metodo.estado_mp) }
+                        domProps: { textContent: _vm._s(tarea.horas) }
                       })
                     ])
                   }),
@@ -12496,14 +12453,118 @@ var render = function() {
                     },
                     [
                       _c("div", { staticClass: "form-group row" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "col-md-3 form-control-label",
-                            attrs: { for: "text-input" }
-                          },
-                          [_vm._v("Nombre")]
-                        ),
+                        _vm._m(2),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-9" }, [
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.hito_id,
+                                  expression: "hito_id"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              on: {
+                                change: [
+                                  function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.hito_id = $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  },
+                                  function($event) {
+                                    return _vm.selectProgramadorTarea($event)
+                                  }
+                                ]
+                              }
+                            },
+                            [
+                              _c("option", { attrs: { value: "0" } }, [
+                                _vm._v("Seleccione una opción: ")
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(_vm.arrayHito, function(hito) {
+                                return _c("option", {
+                                  key: hito.id,
+                                  attrs: { value: "hito.id" },
+                                  domProps: { textContent: _vm._s(hito.titulo) }
+                                })
+                              })
+                            ],
+                            2
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group row" }, [
+                        _vm._m(3),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-9" }, [
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.miembro_id,
+                                  expression: "miembro_id"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.miembro_id = $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                }
+                              }
+                            },
+                            [
+                              _c("option", { attrs: { value: "0" } }, [
+                                _vm._v("Seleccione una opción: ")
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(_vm.arrayProgramador, function(
+                                programador
+                              ) {
+                                return _c("option", {
+                                  key: programador.id,
+                                  domProps: {
+                                    value: programador.id,
+                                    textContent: _vm._s(programador.nombre)
+                                  }
+                                })
+                              })
+                            ],
+                            2
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group row" }, [
+                        _vm._m(4),
                         _vm._v(" "),
                         _c("div", { staticClass: "col-md-9" }, [
                           _c("input", {
@@ -12511,23 +12572,23 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.nombre_mp,
-                                expression: "nombre_mp"
+                                value: _vm.fecha_inicio,
+                                expression: "fecha_inicio"
                               }
                             ],
                             staticClass: "form-control",
                             attrs: {
-                              type: "text",
-                              placeholder:
-                                "Ingrese el nombre del metodo de pago"
+                              type: "date",
+                              placeholder: "Ingrese la fecha de inicio",
+                              min: "<?php echo $fecha = date()?>"
                             },
-                            domProps: { value: _vm.nombre_mp },
+                            domProps: { value: _vm.fecha_inicio },
                             on: {
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
                                 }
-                                _vm.nombre_mp = $event.target.value
+                                _vm.fecha_inicio = $event.target.value
                               }
                             }
                           })
@@ -12535,14 +12596,7 @@ var render = function() {
                       ]),
                       _vm._v(" "),
                       _c("div", { staticClass: "form-group row" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "col-md-3 form-control-label",
-                            attrs: { for: "text-input" }
-                          },
-                          [_vm._v("Cantidad minima retiro")]
-                        ),
+                        _vm._m(5),
                         _vm._v(" "),
                         _c("div", { staticClass: "col-md-9" }, [
                           _c("input", {
@@ -12550,22 +12604,22 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.cantidad_minretiro,
-                                expression: "cantidad_minretiro"
+                                value: _vm.horas,
+                                expression: "horas"
                               }
                             ],
                             staticClass: "form-control",
                             attrs: {
                               type: "text",
-                              placeholder: "Ingrese cantidad minima de retiro"
+                              placeholder: "Ingrese horas de trabajo "
                             },
-                            domProps: { value: _vm.cantidad_minretiro },
+                            domProps: { value: _vm.horas },
                             on: {
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
                                 }
-                                _vm.cantidad_minretiro = $event.target.value
+                                _vm.horas = $event.target.value
                               }
                             }
                           })
@@ -12573,14 +12627,7 @@ var render = function() {
                       ]),
                       _vm._v(" "),
                       _c("div", { staticClass: "form-group row" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "col-md-3 form-control-label",
-                            attrs: { for: "text-input" }
-                          },
-                          [_vm._v("Cantidad maxima retiro")]
-                        ),
+                        _vm._m(6),
                         _vm._v(" "),
                         _c("div", { staticClass: "col-md-9" }, [
                           _c("input", {
@@ -12588,212 +12635,22 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.cantidad_maxretiro,
-                                expression: "cantidad_maxretiro"
+                                value: _vm.descripcion,
+                                expression: "descripcion"
                               }
                             ],
                             staticClass: "form-control",
                             attrs: {
                               type: "text",
-                              placeholder: "Ingrese cantidad maxima de retiro"
+                              placeholder: "Ingrese la descripcion"
                             },
-                            domProps: { value: _vm.cantidad_maxretiro },
+                            domProps: { value: _vm.descripcion },
                             on: {
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
                                 }
-                                _vm.cantidad_maxretiro = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "col-md-3 form-control-label",
-                            attrs: { for: "text-input" }
-                          },
-                          [_vm._v("Cargo de retiro")]
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.cargo_retiro,
-                                expression: "cargo_retiro"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              placeholder: "Ingrese carg de retoro"
-                            },
-                            domProps: { value: _vm.cargo_retiro },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.cargo_retiro = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "col-md-3 form-control-label",
-                            attrs: { for: "text-input" }
-                          },
-                          [_vm._v("Porcentaje de cargo")]
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.porcentaje_cargo,
-                                expression: "porcentaje_cargo"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              placeholder: "Ingrese porcentaje de cargo"
-                            },
-                            domProps: { value: _vm.porcentaje_cargo },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.porcentaje_cargo = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "col-md-3 form-control-label",
-                            attrs: { for: "text-input" }
-                          },
-                          [_vm._v("Taza")]
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.taza_mp,
-                                expression: "taza_mp"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              placeholder: "Ingrese taza"
-                            },
-                            domProps: { value: _vm.taza_mp },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.taza_mp = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "col-md-3 form-control-label",
-                            attrs: { for: "text-input" }
-                          },
-                          [_vm._v("Moneda")]
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.moneda_mp,
-                                expression: "moneda_mp"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              placeholder: "Ingrese Moneda"
-                            },
-                            domProps: { value: _vm.moneda_mp },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.moneda_mp = $event.target.value
-                              }
-                            }
-                          })
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group row" }, [
-                        _c(
-                          "label",
-                          {
-                            staticClass: "col-md-3 form-control-label",
-                            attrs: { for: "text-input" }
-                          },
-                          [_vm._v("Dias habiles")]
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "col-md-9" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.dias_habiles,
-                                expression: "dias_habiles"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              placeholder: "Ingrese dias habiles"
-                            },
-                            domProps: { value: _vm.dias_habiles },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.dias_habiles = $event.target.value
+                                _vm.descripcion = $event.target.value
                               }
                             }
                           })
@@ -12832,7 +12689,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-footer" }, [
-                  _vm._m(2),
+                  _vm._m(7),
                   _vm._v(" "),
                   _c(
                     "button",
@@ -12856,7 +12713,7 @@ var render = function() {
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
-                              return _vm.registrarMetodo()
+                              return _vm.registrarTarea()
                             }
                           }
                         },
@@ -12893,12 +12750,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("ol", { staticClass: "breadcrumb col-lg-12" }, [
-      _c("li", { staticClass: "breadcrumb-item" }, [
-        _c("a", { attrs: { href: "/principal" } }, [_vm._v("Tablero")])
-      ]),
-      _vm._v(" "),
-      _c("li", { staticClass: "breadcrumb-item" }, [_vm._v("Métodos de Pago")])
+    return _c("li", { staticClass: "breadcrumb-item" }, [
+      _c("a", { attrs: { href: "/principal" } }, [_vm._v("Tablero")])
     ])
   },
   function() {
@@ -12907,25 +12760,82 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", [_vm._v("Nombre")]),
+        _c("th", [_vm._v("Opciones")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Cant. Min. Retiro")]),
+        _c("th", [_vm._v("Descripcion")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Cant. Max. Retiro")]),
+        _c("th", [_vm._v("Hito")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Cargo de Retiro")]),
+        _c("th", [_vm._v("Programador")]),
         _vm._v(" "),
-        _c("th", [_vm._v("% por Cargo")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Taza")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Moneda")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Días Hábiles")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Estado")])
+        _c("th", [_vm._v("horas")])
       ])
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Hito "), _c("b", [_vm._v("(*)")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Programador "), _c("b", [_vm._v("(*)")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Fecha inicio"), _c("b", [_vm._v("(*)")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Horas"), _c("b", [_vm._v("(*)")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "col-md-3 form-control-label",
+        attrs: { for: "text-input" }
+      },
+      [_vm._v("Descripcion "), _c("b", [_vm._v("(*)")])]
+    )
   },
   function() {
     var _vm = this
@@ -25830,7 +25740,7 @@ Vue.component('proyectoprogramador-component', __webpack_require__(/*! ./compone
 Vue.component('proyectointegrantes-component', __webpack_require__(/*! ./components/ProyectoIntegrantesComponent.vue */ "./resources/js/components/ProyectoIntegrantesComponent.vue")["default"]);
 Vue.component('proyectotodos-component', __webpack_require__(/*! ./components/ProyectoTodosComponent.vue */ "./resources/js/components/ProyectoTodosComponent.vue")["default"]);
 Vue.component('hitos-component', __webpack_require__(/*! ./components/HitosComponent.vue */ "./resources/js/components/HitosComponent.vue")["default"]);
-Vue.component('tareas-component', __webpack_require__(/*! ./components/TareasPagoComponent.vue */ "./resources/js/components/TareasPagoComponent.vue")["default"]);
+Vue.component('tareas-component', __webpack_require__(/*! ./components/TareasComponent.vue */ "./resources/js/components/TareasComponent.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -26470,18 +26380,18 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/TareasPagoComponent.vue":
-/*!*********************************************************!*\
-  !*** ./resources/js/components/TareasPagoComponent.vue ***!
-  \*********************************************************/
+/***/ "./resources/js/components/TareasComponent.vue":
+/*!*****************************************************!*\
+  !*** ./resources/js/components/TareasComponent.vue ***!
+  \*****************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _TareasPagoComponent_vue_vue_type_template_id_fe83a252___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TareasPagoComponent.vue?vue&type=template&id=fe83a252& */ "./resources/js/components/TareasPagoComponent.vue?vue&type=template&id=fe83a252&");
-/* harmony import */ var _TareasPagoComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TareasPagoComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/TareasPagoComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _TareasPagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TareasPagoComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _TareasComponent_vue_vue_type_template_id_5e3ac670___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TareasComponent.vue?vue&type=template&id=5e3ac670& */ "./resources/js/components/TareasComponent.vue?vue&type=template&id=5e3ac670&");
+/* harmony import */ var _TareasComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TareasComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/TareasComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _TareasComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TareasComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -26492,9 +26402,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _TareasPagoComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _TareasPagoComponent_vue_vue_type_template_id_fe83a252___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _TareasPagoComponent_vue_vue_type_template_id_fe83a252___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _TareasComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TareasComponent_vue_vue_type_template_id_5e3ac670___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TareasComponent_vue_vue_type_template_id_5e3ac670___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -26504,54 +26414,54 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/TareasPagoComponent.vue"
+component.options.__file = "resources/js/components/TareasComponent.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/TareasPagoComponent.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************!*\
-  !*** ./resources/js/components/TareasPagoComponent.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************/
+/***/ "./resources/js/components/TareasComponent.vue?vue&type=script&lang=js&":
+/*!******************************************************************************!*\
+  !*** ./resources/js/components/TareasComponent.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TareasPagoComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasPagoComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TareasComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css&":
-/*!******************************************************************************************!*\
-  !*** ./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css& ***!
-  \******************************************************************************************/
+/***/ "./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css&":
+/*!**************************************************************************************!*\
+  !*** ./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \**************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--5-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--5-2!../../../node_modules/vue-loader/lib??vue-loader-options!./TareasPagoComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasPagoComponent.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
- /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--5-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--5-2!../../../node_modules/vue-loader/lib??vue-loader-options!./TareasComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
-/***/ "./resources/js/components/TareasPagoComponent.vue?vue&type=template&id=fe83a252&":
-/*!****************************************************************************************!*\
-  !*** ./resources/js/components/TareasPagoComponent.vue?vue&type=template&id=fe83a252& ***!
-  \****************************************************************************************/
+/***/ "./resources/js/components/TareasComponent.vue?vue&type=template&id=5e3ac670&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/TareasComponent.vue?vue&type=template&id=5e3ac670& ***!
+  \************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_template_id_fe83a252___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TareasPagoComponent.vue?vue&type=template&id=fe83a252& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasPagoComponent.vue?vue&type=template&id=fe83a252&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_template_id_fe83a252___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_template_id_5e3ac670___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TareasComponent.vue?vue&type=template&id=5e3ac670& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TareasComponent.vue?vue&type=template&id=5e3ac670&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_template_id_5e3ac670___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasPagoComponent_vue_vue_type_template_id_fe83a252___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TareasComponent_vue_vue_type_template_id_5e3ac670___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

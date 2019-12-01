@@ -66,6 +66,10 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/hito/registrar','HitoController@store');
             Route::put('/hito/actualizar','HitoController@update');
             Route::get('/hito','HitoController@index');
+            Route::get('/tarea','TareaController@index');
+            Route::post('/tarea/registrar','TareaController@store');
+            Route::get('/usuario/selectHito','HitoController@selectHito');
+           Route::get('/usuario/selectProgramadorTarea','UserController@selectProgramadorTarea');
     });
     //Rutas para el usuario 'Programador'
     Route::group(['middleware' => ['Programador']], function () {

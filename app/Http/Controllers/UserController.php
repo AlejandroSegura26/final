@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 //Se hace el llamado al modelo 'user'
 use App\User;
-
+use App\Hito;
 class UserController extends Controller
 {
     //Función para mostrar todos los registros de la tabla 'usuarios' dependiendo de lo que se busque o no
@@ -129,5 +129,21 @@ class UserController extends Controller
         ->select('id','nombre')->orderBy('nombre','asc')->get();
         return ['programador' => $programador];
     }
+  
+ 
+          
+     public function selectProgramadorTarea(Request $request)
+    {
+        //Verifica que solo existan peticiones por Ajax, en caso de acceder a una ruta dirigira a la raiz
+         if (!$request->ajax()) return redirect('/');
+        //Verifica que traiga solo los roles que estan activas y las ordena ascendentemente para guardalas en el arreglo 'roles'
+        $programador =User::join('miembros_proyecto','miembros_proyecto.id_usuario','=','usuarios.id')
+        ->join('hitos','hitos.id_proyecto','=','miembros_proyecto.id_proyecto')
+            ->select('usuarios.id','usuarios.nombre')
+            ->where('hitos.id','=',$request->id)
+            ->orderBy('usuarios.id','desc')->get();
+        return ['programador' => $programador];
+    }
+   
   
 }
