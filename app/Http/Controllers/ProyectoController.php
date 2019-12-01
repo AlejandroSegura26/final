@@ -14,13 +14,13 @@ class ProyectoController extends Controller
            //if (!$request->ajax()) return redirect('/');
            $buscar = $request->buscar;
            $criterio = $request->criterio;
-         
+
             if ($buscar == '') {
             $proyecto =Proyecto::join('usuarios AS cliente','cliente.id','=','proyecto.id_cliente')->join('usuarios AS manager','manager.id','=','proyecto.id_manager')
             ->select('proyecto.id','cliente.nombre as cnombre','manager.nombre as mnombre','proyecto.titulo','proyecto.fecha_inicio','proyecto.fecha_final','proyecto.estado','proyecto.descripcion')
             ->orderBy('proyecto.id','desc')
             ->paginate(5);
-              
+
         //En caso contrario devuelve aquellos registros que coinciden con el texto a buscar y lo ordena descendentemente y los pagina de 5 en 5
         } else {
             $proyecto =Proyecto::join('usuarios AS cliente','cliente.id','=','proyecto.id_cliente')->join('usuarios AS manager','manager.id','=','proyecto.id_manager')
@@ -46,7 +46,7 @@ class ProyectoController extends Controller
        public function store(Request $request)
        {
            if (!$request->ajax()) return redirect('/');
-         
+
          $proyecto = new Proyecto();
          $proyecto -> titulo = $request -> titulo;
          $proyecto -> id_cliente = $request -> id_cliente;
@@ -79,7 +79,7 @@ class ProyectoController extends Controller
          $proyecto -> estado = 'finalizado';
          $proyecto -> save();
        }
-  
+
     public function cancelar(Request $request)
        {
           if (!$request->ajax()) return redirect('/');
@@ -87,10 +87,10 @@ class ProyectoController extends Controller
          $proyecto -> estado = 'cancelado';
          $proyecto -> save();
        }
-  
+
   //funcion que trae los proyectos en los que se encuentra los managers
         public function proyectosManager(Request $request){
-        
+
            $buscar = $request->buscar;
            $criterio = $request->criterio;
 
@@ -120,12 +120,12 @@ class ProyectoController extends Controller
                ],
                'proyecto' => $proyecto
            ];
-       
+
         }
   //funcion que trae los proectos en los que se encuentra el programador
   public function proyectosProgramador(Request $request){
-        
-        
+
+
            $buscar = $request->buscar;
            $criterio = $request->criterio;
 
@@ -156,7 +156,7 @@ class ProyectoController extends Controller
                ],
                'proyecto' => $proyecto
            ];
-       
+
         }
   //funcion que trae los proectos en los que se encuentra el cliente
     public function proyectosCliente(Request $request){
@@ -190,18 +190,31 @@ class ProyectoController extends Controller
                ],
                'proyecto' => $proyecto
            ];
-       
+
         }
 
- 
-  public function selectProyecto(Request $request)
-    {
-        //Verifica que solo existan peticiones por Ajax, en caso de acceder a una ruta dirigira a la raiz
-         if (!$request->ajax()) return redirect('/');
-        //Verifica que traiga solo los roles que estan activas y las ordena ascendentemente para guardalas en el arreglo 'roles'
-        $proyecto = Proyecto::where('id_manager','=',Auth::user()->id)
-        ->select('id','titulo')->orderBy('titulo','asc')->get();
-        return ['proyecto' => $proyecto];
-    }
+        public function selectProyecto(Request $request)
+        {
+            //Verifica que solo existan peticiones por Ajax, en caso de acceder a una ruta dirigira a la raiz
+      
+            //Verifica que traiga solo los roles que estan activas y las ordena ascendentemente para guardalas en el arreglo 'roles'
+            $proyecto = Proyecto::join('miembros_proyecto','miembros_proyecto.id_proyecto','=','proyecto.id')
+            ->select('proyecto.id','proyecto.titulo')
+              ->where('proyecto.estado','=','inicializado','AND','miembros_proyecto.id_usuario','=',Auth::user()->id)
+            ->orderBy('titulo','asc')->get();
+            return ['proyecto' => $proyecto];
+
+        }
+  public function selectProyectoManager(Request $request)
+        {
+            //Verifica que solo existan peticiones por Ajax, en caso de acceder a una ruta dirigira a la raiz
+      
+            //Verifica que traiga solo los roles que estan activas y las ordena ascendentemente para guardalas en el arreglo 'roles'
+            $proyecto = Proyecto::select('proyecto.id','proyecto.titulo')
+              ->where('proyecto.estado','=','inicializado','AND','proyecto.id_manager','=',Auth::user()->id)
+            ->orderBy('titulo','asc')->get();
+            return ['proyecto' => $proyecto];
+        }
+
 
 }

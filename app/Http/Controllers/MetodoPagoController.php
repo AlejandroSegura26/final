@@ -8,7 +8,7 @@ use App\MetodoPago;
 class MetodoPagoController extends Controller
 {
 
-    public function index(Request $request){ 
+    public function index(Request $request){
         if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
@@ -17,7 +17,7 @@ class MetodoPagoController extends Controller
         if ($buscar==''){
         $metodo = MetodoPago::orderBy('id', 'desc')->paginate(10);
          }
-         else{ 
+         else{
         $metodo = MetodoPago::where($criterio, 'like', '%'. $buscar . '%')->orderBy('id', 'desc')->paginate(10);
           }
 
@@ -32,7 +32,7 @@ class MetodoPagoController extends Controller
         ],
         'metodo' => $metodo
     ];
-        
+
     }
     public function store(Request $request)
     {
@@ -62,7 +62,7 @@ class MetodoPagoController extends Controller
         if (!$request->ajax()) return redirect('/');
         //Se utiliza el metodo 'beginTransaction' para hacer la insercion en la tabla 'personas' y 'proveedores' a la vez, en caso de que no ocurra algun error, se ejecuta la transaccion, en caso contrario, se hace un rollback para eliminar la transaccion creada y no agregar el registro a la base de datos
         //Declaración del objeto 'usuarios'
-      
+
         $metodo = MetodoPago::findOrFail($request->id);
         //Asignación de los valores recopilados de los inputs al objeto 'persona' que sirve para llamar al modelo y guardar el registro en la base de datos
         //$metodo->imagen_mp = $request->nombre;
@@ -101,5 +101,12 @@ class MetodoPagoController extends Controller
         //Asigna el valor para desactivar la condición y actualiza el registro
         $metodo->estado_mp = 1;
         $metodo->save();
+    }
+
+
+    public function selectMetodoPago(Request $request){
+        $metodo = MetodoPago::where('estado_mp','=','1')
+        ->select('id','nombre_mp')->orderBy('nombre_mp','asc')->get();
+        return ['metodo' => $metodo];
     }
 }

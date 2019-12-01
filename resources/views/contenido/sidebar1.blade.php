@@ -71,6 +71,13 @@
             <span>Movimientos</span>
           </a>
         </li>
+
+        <li @click="menu=17" class="nav-item">
+            <a class="nav-link" href="#">
+              <i class="fas fa-fw fa-money-check"></i>
+              <span>Retiros</span>
+            </a>
+          </li>
         <!-- Nav Item - Usuarios -->
         <li @click="menu=9" class="nav-item">
           <a class="nav-link" href="#">

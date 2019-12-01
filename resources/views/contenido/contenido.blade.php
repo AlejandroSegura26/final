@@ -42,16 +42,19 @@
         <template v-if="menu==9">
             <usuario-component></usuario-component>
         </template>
+        <template v-if="menu==17">
+            <aretiros-component></aretiros-component>
+        </template>
     <!-- Director Proyecto -->
     @elseif(Auth::user()->rol_id == 2)
         <template v-if="menu==0">
             <h1>¡Bienvenido {{Auth::user()->usuario}}!</h1>
         </template>
         <template v-if="menu==1">
-            <hitos-component></hitos-component>
+            <h1>D_Proyecto / 1</h1>
         </template>
         <template v-if="menu==2">
-        <tareas-component></tareas-component>
+            <h1>D_Proyecto / 2</h1>
         </template>
         <template v-if="menu==3">
             <h1>D_Proyecto / 3</h1>
@@ -71,7 +74,9 @@
         <template v-if="menu==8">
             <usuario-component></usuario-component>
         </template>
-       
+        <template v-if="menu==20">
+                <mretiros-component></mretiros-component>
+            </template>
     <!-- Programador -->
     @elseif(Auth::user()->rol_id == 3)
         <template v-if="menu==0">
@@ -101,7 +106,9 @@
         <template v-if="menu==8">
             <usuario-component></usuario-component>
         </template>
-       
+        <template v-if="menu==19">
+                <retiros-component></retiros-component>
+            </template>
     <!-- Cliente -->
     @elseif(Auth::user()->rol_id == 4)
         <template v-if="menu==0">

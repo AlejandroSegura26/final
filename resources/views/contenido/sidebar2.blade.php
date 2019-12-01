@@ -78,6 +78,13 @@
           <span>Usuarios</span>
         </a>
       </li>
+
+      <li @click="menu=20" class="nav-item">
+            <a class="nav-link" href="#">
+              <i class="fas fa-fw fa-money-check"></i>
+              <span>Retiros</span>
+            </a>
+          </li>
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
       <!-- Sidebar Toggler (Sidebar) -->

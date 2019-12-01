@@ -51,33 +51,44 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/metodoPago/actualizar','MetodoPagoController@update');
         Route::put('/metodoPago/desactivar','MetodoPagoController@desactivar');
         Route::put('/metodoPago/activar','MetodoPagoController@activar');
-        
 
+      //aceptar
+      Route::get('/retiro','GastosController@vistaaprobar');
+      Route::put('/retiro/aceptar','GastosController@aceptar');
+      Route::put('/retiro/rechazar','GastosController@rechazar');
+      Route::put('/retiro/cambio','GastosController@change');
+     
     });
     //Rutas para el usuario 'Director de Proyecto'
-        Route::group(['middleware' => ['DirectorProyecto']], function () 
-        {
-            Route::get('/proyecto/proyectomanager','ProyectoController@proyectosManager');
-            Route::put('/proyecto/desactivar','ProyectoController@desactivar');
-            Route::get('/usuario/selectProgramador','UserController@selectProgramador');
-            Route::get('/usuario/selectProyecto','ProyectoController@selectProyecto');
-            Route::get('/usuario/selectHito','HitoController@selectHito');
-            Route::get('/usuario/selectProgramadorTarea','UserController@selectProgramadorTarea');
-            Route::post('/miembrosProyecto/agregar','ProyectoMiembroController@store');
-            Route::get('/miembrosProyecto','ProyectoMiembroController@index');
-            Route::post('/hito/registrar','HitoController@store');
-            Route::put('/hito/actualizar','HitoController@update');
-            Route::get('/hito','HitoController@index');
-            Route::post('/hito/desactivar','HitoController@desactivar');
-            Route::get('/tarea','TareaController@index');
-            Route::post('/tarea/registrar','TareaController@store');
-            Route::put('/tarea/desactivar','TareaController@desactivar');
-            
+    Route::group(['middleware' => ['DirectorProyecto']], function () {
+      Route::get('/proyecto/proyectomanager','ProyectoController@proyectosManager');
+      Route::put('/proyecto/desactivar','ProyectoController@desactivar');
+      Route::get('/usuario/selectProgramador','UserController@selectProgramador');
+      Route::get('/usuario/selectProyecto','ProyectoController@selectProyecto2');
+      Route::get('/usuario/selectProgramadorTarea','UserController@selectProgramadorTarea');
+      Route::get('/usuario/selectHito','HitoController@selectHito');
+      Route::post('/miembrosProyecto/agregar','ProyectoMiembroController@store');
+      Route::get('/miembrosProyecto','ProyectoMiembroController@index');
+      Route::get('/retiro/programador','GastosController@index');
+      Route::post('/retiro/agregar','GastosController@store');
+      Route::get('/metodo/selectMetodoPago','MetodoPagoController@selectMetodoPago');
+      Route::get('/proyecto/selectProyectoManager','ProyectoController@selectProyectoManager');
+      Route::post('/hito/registrar','HitoController@store');
+      Route::put('/hito/actualizar','HitoController@update');
+      Route::get('/hito','HitoController@index');
+      Route::post('/hito/desactivar','HitoController@desactivar');
+      Route::get('/tarea','TareaController@index');
+      Route::post('/tarea/registrar','TareaController@store');
+      Route::put('/tarea/desactivar','TareaController@desactivar');
+      
     });
     //Rutas para el usuario 'Programador'
     Route::group(['middleware' => ['Programador']], function () {
-
-Route::get('/proyecto/proyectoprogramador','ProyectoController@proyectosProgramador');
+      Route::get('/retiro/programador','GastosController@index');
+      Route::post('/retiro/agregar','GastosController@store');
+      Route::get('/metodo/selectMetodoPago','MetodoPagoController@selectMetodoPago');
+      Route::get('/proyecto/selectProyecto','ProyectoController@selectProyecto');
+      Route::get('/proyecto/proyectoprogramador','ProyectoController@proyectosProgramador');
     });
     //Rutas para el usuario 'Cliente'
     Route::group(['middleware' => ['Cliente']], function () {

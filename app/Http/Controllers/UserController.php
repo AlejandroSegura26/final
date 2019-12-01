@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 //Se hace el llamado al modelo 'user'
 use App\User;
-use App\Hito;
+
 class UserController extends Controller
 {
     //Función para mostrar todos los registros de la tabla 'usuarios' dependiendo de lo que se busque o no
@@ -129,9 +129,6 @@ class UserController extends Controller
         ->select('id','nombre')->orderBy('nombre','asc')->get();
         return ['programador' => $programador];
     }
-  
- 
-          
      public function selectProgramadorTarea(Request $request)
     {
         //Verifica que solo existan peticiones por Ajax, en caso de acceder a una ruta dirigira a la raiz
@@ -144,6 +141,5 @@ class UserController extends Controller
             ->orderBy('usuarios.id','desc')->get();
         return ['programador' => $programador];
     }
-   
   
 }
