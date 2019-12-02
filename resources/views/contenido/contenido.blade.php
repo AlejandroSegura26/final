@@ -86,7 +86,7 @@
             <h1>Programador / 1</h1>
         </template>
         <template v-if="menu==2">
-            <h1>Programador / 2</h1>
+            <tareasProgramador-component></tareasProgramador-component>
         </template>
         <template v-if="menu==3">
             <h1>Programador / 3</h1>
@@ -95,7 +95,7 @@
             <h1>Programador / 4</h1>
         </template>
         <template v-if="menu==10">
-             <proyectoprogramador-component></proyectoprogramador-component>
+             <tareasprogramador-component></tareasprogramador-component>
         </template>
         <template v-if="menu==6">
             <h1>Programador / 6</h1>

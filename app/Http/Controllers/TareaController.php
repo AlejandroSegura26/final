@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Tarea;
 use App\Hito;
+use Illuminate\Support\Facades\Auth;
 class TareaController extends Controller
 {
   
@@ -33,6 +34,45 @@ class TareaController extends Controller
        } 
     
       return [
+            'pagination' => [
+                'total' => $tarea->total(),
+                'current_page' => $tarea->currentPage(),
+                'per_page' => $tarea->perPage(),
+                'last_page' => $tarea->lastPage(),
+                'from' => $tarea->firstItem(),
+                'to' => $tarea->lastItem(),
+            ],
+            'tareas' => $tarea
+        ];
+  }
+  
+    
+  public function indexProgramador(Request $request)
+  {
+    if (!$request->ajax()) return redirect('/');
+    $buscar = $request->buscar;
+    $criterio = $request->criterio;
+    if ($buscar == '') 
+    {
+      $tarea =Tarea::join('hitos','hitos.id','=','tareas.hito_id')
+        ->join('usuarios','usuarios.id','=','tareas.miembro_id')
+              ->select('tareas.id','tareas.descripcion','hitos.titulo','usuarios.nombre','tareas.horas','tareas.estado')
+              ->where('tareas.miembro_id','=',Auth::user()->id)
+              ->orderBy('tareas.id','desc')
+              ->paginate(5);
+              
+    }   
+    else 
+    {
+      $tarea =Tarea::join('hitos','hitos.id','=','tareas.hito_id')
+              ->join('usuarios','usuarios.id','=','tareas.miembro_id')
+              ->select('tareas.id','tareas.descripcion','hitos.titulo','usuarios.nombre','tareas.fecha_inicio','tareas.horas','tareas.estado')
+              ->where('tareas.'.$criterio,'like','%'.$buscar.'%')
+              ->where('tareas.miembro_id','=',Auth::user()->id)
+              ->orderBy('tareas.id','desc')
+              ->paginate(5);
+       } 
+  return [
             'pagination' => [
                 'total' => $tarea->total(),
                 'current_page' => $tarea->currentPage(),

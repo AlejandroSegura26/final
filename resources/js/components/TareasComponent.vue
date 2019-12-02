@@ -238,7 +238,7 @@
                     buttonsStyling: false
                 })
                 swalWithBootstrapButtons.fire({
-                    title: '¿Estás seguro de activar este usuario?',
+                    title: '¿Estás seguro de finalizar esta tarea?',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Aceptar',

@@ -89,6 +89,7 @@ Route::group(['middleware' => ['auth']], function () {
       Route::get('/metodo/selectMetodoPago','MetodoPagoController@selectMetodoPago');
       Route::get('/proyecto/selectProyecto','ProyectoController@selectProyecto');
       Route::get('/proyecto/proyectoprogramador','ProyectoController@proyectosProgramador');
+       Route::get('/tareaProgramador','TareaController@indexProgramador');
     });
     //Rutas para el usuario 'Cliente'
     Route::group(['middleware' => ['Cliente']], function () {
