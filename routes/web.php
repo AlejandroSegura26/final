@@ -86,15 +86,19 @@ Route::group(['middleware' => ['auth']], function () {
       Route::put('/tarea/desactivar','TareaController@desactivar');
        //inbox manager
       Route::get('/manager/receptor','inboxController@inboxManagerR');
-     
       Route::post('/inbox/enviar','inboxController@inboxNew');
-      
       Route::get('/inbox/proyectom','inboxController@ProyectoM');
       Route::get('/inbox/cliente','inboxController@Clientes');
       
+      Route::post('/factura/registrar','FacturaController@store');
+      Route::post('/factura','FacturaController@index');
+      Route::get('/usuario/selectCliente','UserController@selectCliente');
+      Route::get('/factura','FacturaController@index');
+      Route::put('/factura/actualizar','FacturaController@update');
+      Route::post('/factura/cancelar','FacturaController@cancelar');
     });
     //Rutas para el usuario 'Programador'
-    Route::group(['middleware' => ['Programador']], function () {
+      Route::group(['middleware' => ['Programador']], function () {
       Route::get('/retiro/programador','GastosController@index');
       Route::post('/retiro/agregar','GastosController@store');
       Route::get('/metodo/selectMetodoPago','MetodoPagoController@selectMetodoPago');
@@ -114,6 +118,9 @@ Route::group(['middleware' => ['auth']], function () {
       
       Route::get('/inbox/proyectoc','inboxController@ProyectoC');
       Route::get('/inbox/manager','inboxController@Manager');
+      
+       Route::get('/facturaCliente','FacturaController@index2');
+      Route::put('/factura/pago','FacturaController@pago');
     });
     //Contenido principal
     Route::get('/principal', function () {

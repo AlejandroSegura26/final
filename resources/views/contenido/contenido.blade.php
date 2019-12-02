@@ -69,7 +69,7 @@
             <h1>D_Proyecto / 6</h1>
         </template>
         <template v-if="menu==7">
-            <h1>D_Proyecto / 7</h1>
+          <facturasmanager-component></proyectomanager-component>
         </template>
         <template v-if="menu==8">
             <usuario-component></usuario-component>
@@ -133,7 +133,7 @@
             <h1>Cliente / 6</h1>
         </template>
         <template v-if="menu==7">
-            <h1>Cliente / 7</h1>
+           <facturascliente-component></facturascliente-component>
         </template>
         <template v-if="menu==8">
             <usuario-component></usuario-component>

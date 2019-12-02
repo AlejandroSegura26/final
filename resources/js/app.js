@@ -38,6 +38,8 @@ Vue.component('inboxadmin-component',require('./components/InboxadminComponent.v
 Vue.component('inboxcliente-component',require('./components/inboxcliente.vue').default);
 Vue.component('inboxmanager-component',require('./components/Inboxmanager.vue').default);
 Vue.component('tareasprogramador-component',require('./components/TareasProgramadorComponent.vue').default);
+Vue.component('facturasmanager-component',require('./components/FacturasComponent.vue').default);
+Vue.component('facturascliente-component',require('./components/FacturasClienteComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
