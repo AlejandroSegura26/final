@@ -30,19 +30,12 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Hitos, Tareas y Boletos:</h6>
-            <a @click="menu=1" class="collapse-item" href="#"><i class="fas fa-fw fa-thumbtack"></i>&nbsp;Hitos</a>
-            <a @click="menu=2" class="collapse-item" href="#"><i class="fas fa-fw fa-list"></i>&nbsp;Tareas</a>
             <a @click="menu=24" class="collapse-item" href="#"><i class="fas fa-fw fa-comment-dots"></i>&nbsp;Boletos</a>
+            <a @click="menu=4" class="collapse-item" href="#"><i class="fas fa-fw fa-bookmark"></i>&nbsp;Problemas</a>
           </div>
         </div>
       </li>
-      <!-- Nav Item - Metodos de Pago -->
-      <li @click="menu=4" class="nav-item">
-        <a class="nav-link" href="#">
-          <i class="fas fa-fw fa-credit-card"></i>
-          <span>Métodos de Pago</span>
-        </a>
-      </li>
+   
       <!-- Nav Item - Proyectos -->
       <li @click="menu=11" class="nav-item">
         <a class="nav-link" href="#">
@@ -50,13 +43,7 @@
           <span>Proyectos</span>
         </a>
       </li>
-      <!-- Nav Item - Servicios -->
-      <li @click="menu=6" class="nav-item">
-        <a class="nav-link" href="#">
-          <i class="fas fa-fw fa-screwdriver"></i>
-          <span>Servicios</span>
-        </a>
-      </li>
+   
       <!-- Nav Item - Facturas -->
       <li @click="menu=7" class="nav-item">
         <a class="nav-link" href="#">
@@ -69,13 +56,6 @@
         <a class="nav-link" href="#">
           <i class="fas fa-fw fa-money-check"></i>
           <span>Movimientos</span>
-        </a>
-      </li>
-      <!-- Nav Item - Usuarios -->
-      <li @click="menu=9" class="nav-item">
-        <a class="nav-link" href="#">
-          <i class="fas fa-fw fa-user"></i>
-          <span>Usuarios</span>
         </a>
       </li>
       <!-- Divider -->

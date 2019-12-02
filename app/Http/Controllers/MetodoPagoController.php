@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\MetodoPago;
-use App\metodocantpago;
+
 class MetodoPagoController extends Controller
 {
 
@@ -41,6 +41,9 @@ class MetodoPagoController extends Controller
         //Se utiliza el metodo 'beginTransaction' para hacer la insercion en la tabla 'personas' y 'proveedores' a la vez, en caso de que no ocurra algun error, se ejecuta la transaccion, en caso contrario, se hace un rollback para eliminar la transaccion creada y no agregar el registro a la base de datos
         //Declaración del objeto 'usuarios'
         $metodo = new MetodoPago();
+        //Storage::disk('local')->put($request->imagen);
+        //Asignación de los valores recopilados de los inputs al objeto 'persona' que sirve para llamar al modelo y guardar el registro en la base de datos
+        //$metodo->imagen_mp = $request->nombre;
         $metodo->nombre_mp = $request->nombre_mp;
         $metodo->cantidad_minretiro = $request->cantidad_minretiro;
         $metodo->cantidad_maxretiro = $request->cantidad_maxretiro;
@@ -51,10 +54,6 @@ class MetodoPagoController extends Controller
         $metodo->dias_habiles = $request->dias_habiles;
         $metodo->estado_mp = 1;
         $metodo->save();
-        $metodCPago= new metodocantpago();
-        $metodCPago->cantidad_actual=0;
-         $metodCPago->id_metodo_pago=$metodo->id;
-        $metodCPago->save();
     }
 
     public function update(Request $request)
@@ -77,7 +76,6 @@ class MetodoPagoController extends Controller
         $metodo->dias_habiles = $request->dias_habiles;
         $metodo->estado_mp = 1;
         $metodo->save();
-      
     }
 
     //Función para desactivar un usuario

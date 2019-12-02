@@ -33,6 +33,7 @@
             <a @click="menu=1" class="collapse-item" href="#"><i class="fas fa-fw fa-thumbtack"></i>&nbsp;Hitos</a>
             <a @click="menu=2" class="collapse-item" href="#"><i class="fas fa-fw fa-list"></i>&nbsp;Tareas</a>
             <a @click="menu=23" class="collapse-item" href="#"><i class="fas fa-fw fa-comment-dots"></i>&nbsp;Boletos</a>
+            <a @click="menu=30" class="collapse-item" href="#"><i class="fas fa-fw fa-bookmark"></i>&nbsp;Problemas</a>
           </div>
         </div>
       </li>
@@ -51,7 +52,7 @@
         </a>
       </li>
       <!-- Nav Item - Servicios -->
-      <li @click="menu=6" class="nav-item">
+      <li @click="menu=25" class="nav-item">
         <a class="nav-link" href="#">
           <i class="fas fa-fw fa-screwdriver"></i>
           <span>Servicios</span>
@@ -71,20 +72,19 @@
           <span>Movimientos</span>
         </a>
       </li>
-      <!-- Nav Item - Usuarios -->
-      <li @click="menu=9" class="nav-item">
-        <a class="nav-link" href="#">
-          <i class="fas fa-fw fa-user"></i>
-          <span>Usuarios</span>
-        </a>
-      </li>
-
       <li @click="menu=20" class="nav-item">
             <a class="nav-link" href="#">
               <i class="fas fa-fw fa-money-check"></i>
               <span>Retiros</span>
             </a>
           </li>
+          <!-- Nav Item - Usuarios -->
+      <li @click="menu=40" class="nav-item">
+        <a class="nav-link" href="#">
+          <i class="fas fa-fw fa-map-marker"></i>
+          <span>Sitio</span>
+        </a>
+      </li>
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
       <!-- Sidebar Toggler (Sidebar) -->

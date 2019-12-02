@@ -3,7 +3,7 @@
         <!-- Breadcrumb -->
         <ol class="breadcrumb col-lg-12">
             <li class="breadcrumb-item"><a href="/principal">Tablero</a></li>
-            <li class="breadcrumb-item"><a @click="menu=23" href="#">Boletos</a></li>
+            <li class="breadcrumb-item"><a @click="menu=24" href="#">Boletos</a></li>
             <li class="breadcrumb-item">Boletos Cliente</li>
         </ol>
         <div class="container-fluid">

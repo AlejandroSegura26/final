@@ -243,7 +243,7 @@
                 id_cliente: 0,
                 id_programador:0,
                 arrayProgramador:[],
-                 rol:'',
+                rol:'',
                 cantidad:0,
                 tipo_pago:'',
                 arrayProyecto: [],

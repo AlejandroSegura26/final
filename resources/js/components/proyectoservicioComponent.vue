@@ -1,15 +1,9 @@
 <template>
     <main class="main" style="width: 100%; height: 100%;">
-        <!-- Breadcrumb -->
-        <ol class="breadcrumb col-lg-12">
-            <li class="breadcrumb-item"><a href="/principal">Tablero</a></li>
-            <li class="breadcrumb-item"><a @click="menu=10" href="#">Proyectos</a></li>
-            <li class="breadcrumb-item">Programador</li>
-        </ol>
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-suitecase"></i>&nbsp;&nbsp;Proyectos&nbsp;
+                    <i class="fa fa-suitecase"></i>&nbsp;&nbsp;Servicios del proyecto&nbsp;
                 </div>
                 <div class="card-body">
                     <div class="form-group row">
@@ -28,26 +22,25 @@
                     <table class="table table-bordered table-striped table-sm">
                         <thead>
                             <tr>
-                              
+
                                 <th>Titulo</th>
-                                <th>Cliente</th>
-                                <th>Fecha inicio</th>
-                                <th>Fecha final</th>
-                                <th>Descripcion</th>
-                                <th>Proyect Manager</th>
-                                <th>Estado del proyecto</th>
+                                <th>Direcctor de proyecto</th>
+                                <th>Servicio</th>
+                                <th>Costo</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="proyecto in arrayProyecto" :key="proyecto.id">
-                             
+
                                 <td v-text="proyecto.titulo"></td>
-                                <td v-text="proyecto.cnombre"></td>
-                                <td v-text="proyecto.fecha_inicio"></td>
-                                <td v-text="proyecto.fecha_final"></td>
-                                <td v-text="proyecto.descripcion"></td>
                                 <td v-text="proyecto.mnombre"></td>
-                                <td v-text="proyecto.estado"></td>
+                                <td v-text="proyecto.snombre"></td>
+
+                                <td v-text="proyecto.costo"></td>
+                              
+
+
                             </tr>
                         </tbody>
                     </table>
@@ -72,13 +65,13 @@
 </template>
 
 <script>
-    export default {
+ export default {
         //Propiedad 'data' de javascript donde se declaran las variables necesarias para el funcionamiento del modulo 'categorias', dentro de estas variables tenemos las encargadas de la paginacion, del crud, de la busqueda de registros y del activado y desactivado de la cliente
         data() {
             return {
                 id_proyecto: 0,
                 arrayProyecto: [],
-           
+
                 pagination: {
                     'total': 0,
                     'current_page': 0,
@@ -127,12 +120,12 @@
             listarProyecto(page,buscar,criterio) {
                 let me = this;
                 //Se le asigna a la ruta '/cliente' los parametros 'buscar' y 'criterio' mediante el metodo get que se utiliza para buscar un registro de acuerdo a lo que ha ingresado el usuario en el input para buscar
-                var url = '/proyecto/proyectoprogramador?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
+                var url = '/servicios/proyectos?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
                 axios.get(url).then(function (response) {
                     //Se crea una variable respuesta que guardara los datos de la consulta mediante ajax
                     var respuesta = response.data;
                     //Guarda los datos en el arreglo 'arrayUsuario'
-                    me.arrayProyecto = respuesta.proyecto.data;
+                    me.arrayProyecto = respuesta.servicios.data;
                     //Guarda en el arreglo 'pagination' las variables necesarias para llevar a cabo estas tareas
                     me.pagination = respuesta.pagination;
                 })
@@ -140,7 +133,7 @@
                     console.log(error);
                 });
             },
-          
+
             //Metodo para mostrar una determinada pagina y los registros asignados a ella
             cambiarPagina(page,buscar,criterio){
                 let me = this;
@@ -149,12 +142,12 @@
                 //Envia la peticion para visualizar los datos de esa pagina
                 me.listarProyecto(page,buscar,criterio);
             },
-          
-           
+
+
         },
         //Se utiliza la propiedad 'mounted' para hacer el llamado a los métodos que se quieren cargar automaticamente una vez se muestra el componente 'usuario'
         mounted() {
-          
+
             this.listarProyecto(1,this.buscar,this.criterio);
 
         }
