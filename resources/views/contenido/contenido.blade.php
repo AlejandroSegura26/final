@@ -16,7 +16,7 @@
         </template>
         <!-- Boletos -->
         <template v-if="menu==3">
-            <h1>Administrador / 3</h1>
+            <inboxadmin-component></inboxadmin-component>
         </template>
         <!-- Métodos de Pago -->
         <template v-if="menu==4">
@@ -56,8 +56,8 @@
         <template v-if="menu==2">
           <tareas-component></tareas-component>
         </template>
-        <template v-if="menu==3">
-            <h1>D_Proyecto / 3</h1>
+        <template v-if="menu==23">
+            <inboxmanager-component></inboxmanager-component>
         </template>
         <template v-if="menu==4">
             <h1>D_Proyecto / 4</h1>
@@ -95,7 +95,7 @@
             <h1>Programador / 4</h1>
         </template>
         <template v-if="menu==10">
-             <tareasprogramador-component></tareasprogramador-component>
+             <proyectoprogramador-component></proyectoprogramador-component>
         </template>
         <template v-if="menu==6">
             <h1>Programador / 6</h1>
@@ -120,8 +120,8 @@
         <template v-if="menu==2">
             <h1>Cliente / 2</h1>
         </template>
-        <template v-if="menu==3">
-            <h1>Cliente / 3</h1>
+        <template v-if="menu==24">
+            <inboxcliente-component></inboxcliente-component>
         </template>
         <template v-if="menu==4">
             <h1>Cliente / 4</h1>

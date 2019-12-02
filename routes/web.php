@@ -57,6 +57,10 @@ Route::group(['middleware' => ['auth']], function () {
       Route::put('/retiro/aceptar','GastosController@aceptar');
       Route::put('/retiro/rechazar','GastosController@rechazar');
       Route::put('/retiro/cambio','GastosController@change');
+      
+      //inbox general
+      Route::get('/inbox','inboxController@inboxGeneral');
+      Route::post('/inbox/enviar','inboxController@inboxNew');
      
     });
     //Rutas para el usuario 'Director de Proyecto'
@@ -80,6 +84,13 @@ Route::group(['middleware' => ['auth']], function () {
       Route::get('/tarea','TareaController@index');
       Route::post('/tarea/registrar','TareaController@store');
       Route::put('/tarea/desactivar','TareaController@desactivar');
+       //inbox manager
+      Route::get('/manager/receptor','inboxController@inboxManagerR');
+     
+      Route::post('/inbox/enviar','inboxController@inboxNew');
+      
+      Route::get('/inbox/proyectom','inboxController@ProyectoM');
+      Route::get('/inbox/cliente','inboxController@Clientes');
       
     });
     //Rutas para el usuario 'Programador'
@@ -89,12 +100,20 @@ Route::group(['middleware' => ['auth']], function () {
       Route::get('/metodo/selectMetodoPago','MetodoPagoController@selectMetodoPago');
       Route::get('/proyecto/selectProyecto','ProyectoController@selectProyecto');
       Route::get('/proyecto/proyectoprogramador','ProyectoController@proyectosProgramador');
-       Route::get('/tareaProgramador','TareaController@indexProgramador');
+      Route::get('/tareaProgramador','TareaController@indexProgramador');
     });
     //Rutas para el usuario 'Cliente'
     Route::group(['middleware' => ['Cliente']], function () {
       Route::get('/proyecto/proyectocliente','ProyectoController@proyectosCliente');
       Route::put('/proyecto/cancelar','ProyectoController@cancelar');
+       //inbox manager
+      Route::get('/cliente/receptor','inboxController@inboxClienteR');
+   
+    
+      Route::post('/inbox/enviar','inboxController@inboxNew');
+      
+      Route::get('/inbox/proyectoc','inboxController@ProyectoC');
+      Route::get('/inbox/manager','inboxController@Manager');
     });
     //Contenido principal
     Route::get('/principal', function () {

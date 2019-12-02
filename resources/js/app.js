@@ -34,7 +34,11 @@ Vue.component('retiros-component',require('./components/PeticionComponent.vue').
 Vue.component('mretiros-component',require('./components/PeticionComponentManager.vue').default);
 Vue.component('hitos-component',require('./components/HitosComponent.vue').default);
 Vue.component('tareas-component',require('./components/TareasComponent.vue').default);
+Vue.component('inboxadmin-component',require('./components/InboxadminComponent.vue').default);
+Vue.component('inboxcliente-component',require('./components/inboxcliente.vue').default);
+Vue.component('inboxmanager-component',require('./components/Inboxmanager.vue').default);
 Vue.component('tareasprogramador-component',require('./components/TareasProgramadorComponent.vue').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
